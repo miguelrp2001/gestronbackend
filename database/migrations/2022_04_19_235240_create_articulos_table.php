@@ -16,7 +16,7 @@ return new class extends Migration
     {
         Schema::create('articulos', function (Blueprint $table) {
             $table->id();
-            $table->set('estado', ['a', 'i'])->default('a');
+            $table->enum('estado', ['a', 'i'])->default('a');
             $table->string('nombre', 25);
             $table->string('nombre_corto', 15);
             $table->string('color', 8)->default("ffffffff");

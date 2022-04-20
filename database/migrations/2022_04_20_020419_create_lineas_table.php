@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\Ticket;
+use App\Models\Trabajador;
+use App\Models\Precio;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,7 +18,7 @@ return new class extends Migration
     {
         Schema::create('lineas', function (Blueprint $table) {
             $table->id();
-            $table->set('estado', ['a', 'c'])->default('a');
+            $table->enum('estado', ['a', 'c'])->default('a');
             $table->foreignIdFor(Ticket::class)->references('id')->on('tickets')->restrictOnDelete();
             $table->foreignIdFor(Trabajador::class)->references('id')->on('trabajadors')->restrictOnDelete();
             $table->foreignIdFor(Precio::class)->references('id')->on('precios')->restrictOnDelete();
