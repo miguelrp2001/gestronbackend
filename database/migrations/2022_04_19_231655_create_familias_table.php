@@ -17,7 +17,7 @@ return new class extends Migration
         Schema::create('familias', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 15);
-            $table->foreignIdFor(Centro::class)->references('id')->on('centros')->cascadeOnDelete();
+            $table->foreignIdFor(Centro::class)->references('id')->on('centros')->restrictOnDelete();
             $table->timestamps();
         });
     }

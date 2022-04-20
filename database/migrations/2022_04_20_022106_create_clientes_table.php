@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Familia;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,13 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('articulos', function (Blueprint $table) {
+        Schema::create('clientes', function (Blueprint $table) {
             $table->id();
-            $table->set('estado', ['a', 'i'])->default('a');
+            $table->foreignIdFor(Centro::class)->references('id')->on('centros')->restrictOnDelete();
             $table->string('nombre', 25);
-            $table->string('nombre_corto', 15);
-            $table->string('color', 8)->default("ffffffff");
-            $table->foreignIdFor(Familia::class)->references('id')->on('familias')->restrictOnDelete();
+            $table->string('direccion', 150);
+            $table->string('nif', 9);
+            $table->string('nombre_fiscal', 25);
+            $table->string('telefono', 15);
+            $table->string('correo', 120);
+            $table->boolean('ticketCorreo')->default(true);
             $table->timestamps();
         });
     }
@@ -32,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('articulos');
+        Schema::dropIfExists('clientes');
     }
 };

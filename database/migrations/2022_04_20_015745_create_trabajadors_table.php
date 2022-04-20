@@ -13,13 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('centros', function (Blueprint $table) {
+        Schema::create('trabajadors', function (Blueprint $table) {
             $table->id();
-            $table->string("nombre", 60);
-            $table->string("nombre_legal", 60);
-            $table->string("nif", 9);
-            $table->string("telefono", 9);
-            $table->string("direccion", 160);
+            $table->boolean('activo')->default(true);
+            $table->string('nombre', 15);
+            $table->string('clave', 500)->nullable();
+            $table->foreignIdFor(Centro::class)->references('id')->on('centros')->restrictOnDelete();
             $table->timestamps();
         });
     }
@@ -31,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('centros');
+        Schema::dropIfExists('trabajadors');
     }
 };

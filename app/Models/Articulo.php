@@ -23,4 +23,9 @@ class Articulo extends Model
     {
         return $this->hasManyThrough(Tarifa::class, Precio::class);
     }
+
+    public function lineas()
+    {
+        return $this->belongsToMany(Linea::class);
+    }
 }

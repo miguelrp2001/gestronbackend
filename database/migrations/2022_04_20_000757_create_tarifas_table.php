@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('tarifas', function (Blueprint $table) {
             $table->id();
+            // $table->foreignIdFor(Centro::class)->references('id')->on('centros')->restrictOnDelete();
             $table->string('nombre', 30);
             $table->timestamps();
         });

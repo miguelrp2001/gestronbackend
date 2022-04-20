@@ -13,4 +13,14 @@ class Tarifa extends Model
     {
         return $this->belongsTo(Centro::class);
     }
+
+    public function precios()
+    {
+        return $this->hasMany(Precio::class);
+    }
+
+    public function articulos()
+    {
+        return $this->hasManyThrough(Articulo::class, Precio::class);
+    }
 }

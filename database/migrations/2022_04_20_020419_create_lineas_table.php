@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Impuesto;
+use App\Models\Ticket;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,11 +14,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('precios', function (Blueprint $table) {
+        Schema::create('lineas', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Articulo::class)->references('id')->on('articulos')->restrictOnDelete();
-            $table->foreignIdFor(Tarifa::class)->references('id')->on('tarifas')->restrictOnDelete();
-            $table->foreignIdFor(Impuesto::class)->references('id')->on('impuestos')->restrictOnDelete();
+            $table->set('estado', ['a', 'c'])->default('a');
+            $table->foreignIdFor(Ticket::class)->references('id')->on('tickets')->restrictOnDelete();
+            $table->foreignIdFor(Trabajador::class)->references('id')->on('trabajadors')->restrictOnDelete();
+            $table->foreignIdFor(Precio::class)->references('id')->on('precios')->restrictOnDelete();
             $table->double('precio', 10, 2);
             $table->timestamps();
         });
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('precios');
+        Schema::dropIfExists('lineas');
     }
 };

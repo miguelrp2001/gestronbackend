@@ -22,8 +22,8 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->integer('telefono')->nullable();
-            $table->string('ipRegistro', 15)->nullable();
-            $table->string('ipUltLogin', 15)->nullable();
+            $table->ipAddress('ipRegistro')->nullable();
+            $table->ipAddress('ipUltLogin')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
