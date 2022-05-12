@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class PrecioController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum');
+        $this->middleware('userActive');
+    }
     /**
      * Display a listing of the resource.
      *

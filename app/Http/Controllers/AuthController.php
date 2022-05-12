@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use Validator as Validator;
-
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
 {
@@ -18,28 +18,28 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'notValidToken']]);
+        $this->middleware('auth:sanctum', ['except' => ['login', 'register', 'notValidToken', 'sendmail']]);
+        $this->middleware('userActive', ['except' => ['login', 'register', 'notValidToken', 'sendmail']]);
     }
 
 
-    /**
-     * Get a JWT via given credentials.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function login(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|string|min:6',
-        ]);
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+        $userAtr = $request->validate(
+            [
+                'email' => ['required', 'string', 'max:255', 'email'],
+                'password' => ['required', 'string', 'max:255', 'min:6']
+            ]
+        );
+
+        if (!Auth::attempt($userAtr) || !Auth::user()->activo) {
+            return response()->json(['status' => 'error', 'data' => ['mensaje' => 'no me sirve']], 401);
         }
-        if (!$token = auth()->attempt($validator->validated())) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
-        return $this->createNewToken($token);
+
+
+        $authUser = Auth::user();
+
+        return response()->json(['status' => 'ok', 'data' => ['token' => $authUser->createToken('SanctumToken')->plainTextToken, 'user' => $authUser]], 200);
     }
 
     /**
@@ -49,59 +49,36 @@ class AuthController extends Controller
      */
     public function notValidToken()
     {
-        return response()->json(['error' => 'Unauthorized'], 401);
+        return response()->json(['status' => 'error', 'data' => ['mensaje' => 'Pues no']], 401);
     }
 
-    /**
-     * Register a User.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function register(Request $request)
+
+    public function createAccount(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|between:2,100',
-            'email' => 'required|string|email|max:100|unique:users',
-            'password' => 'required|string|confirmed|min:6',
+        $userAtr = $request->validate(
+            [
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'max:255', 'email', 'unique:users,email'],
+                'password' => ['required', 'string', 'max:255', 'min:6', 'confirmed']
+            ]
+        );
+
+        $user = User::create([
+            'name' => $userAtr['name'],
+            'email' => $userAtr['email'],
+            'password' => bcrypt($userAtr['password']),
+            'confirmation_code' => str_random(60),
         ]);
-        if ($validator->fails()) {
-            return response()->json($validator->errors()->toJson(), 400);
-        }
-        $user = User::create(array_merge(
-            $validator->validated(),
-            ['password' => bcrypt($request->password)]
-        ));
-        return response()->json([
-            'message' => 'User successfully registered',
-            'user' => $user
-        ], 201);
+
+        return response()->json(['token' => $user->createToken('tokens')->plainTextToken], 200);
     }
 
-
-
-    /**
-     * Log the user out (Invalidate the token).
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function logout()
     {
-        auth()->logout(true);
-        return response()->json(['message' => 'logout']);
+        Auth::user()->tokens()->delete();
+
+        return response()->json(['status' => 'ok', 'data' => ['mensaje' => 'logout']]);
     }
-
-
-
-    /**
-     * Refresh a token.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function refresh()
-    {
-        return $this->createNewToken(auth()->refresh());
-    }
-
 
 
     /**
@@ -111,25 +88,18 @@ class AuthController extends Controller
      */
     public function userProfile()
     {
-        return response()->json(auth()->user());
+        // dd(['status' => 'ok', 'data' => ['user' => Auth::user()]]);
+        return response()->json(['status' => 'ok', 'data' => ['user' => Auth::user()]]);
     }
 
-
-
-    /**
-     * Get the token array structure.
-     *
-     * @param  string $token
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function createNewToken($token)
+    public function sendmail(Request $request)
     {
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
-            'user' => auth()->user()
-        ]);
+        $usr = $request->userr;
+        $user = User::findOrFail($usr);
+        // $user->sendEmailVerificationNotification();
+        Password::sendResetLink(
+            ["email" => $user->email]
+        );
+        return response()->json(['status' => 'ok', 'data' => ['mensaje' => "Correo enviado."]]);
     }
 }
