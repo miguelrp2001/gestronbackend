@@ -39,6 +39,10 @@ class AuthController extends Controller
 
         $authUser = Auth::user();
 
+
+        $authUser->ipUltLogin = $request->ip();
+        $authUser->save();
+
         return response()->json(['status' => 'ok', 'data' => ['token' => $authUser->createToken('SanctumToken')->plainTextToken, 'user' => $authUser]], 200);
     }
 
