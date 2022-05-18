@@ -11,6 +11,7 @@ class ArticuloController extends Controller
     {
         $this->middleware('auth:sanctum');
         $this->middleware('userActive');
+        $this->middleware('userAdminCenter')
     }
     /**
      * Display a listing of the resource.

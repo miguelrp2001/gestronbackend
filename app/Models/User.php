@@ -55,6 +55,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function centros()
     {
-        return $this->hasMany(Centro::class);
+        return $this->belongsToMany(Centro::class);
     }
 }

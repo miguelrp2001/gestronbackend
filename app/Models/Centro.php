@@ -9,6 +9,10 @@ class Centro extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'nombre', 'nombre_legal', 'nif', 'telefono', 'direccion'
+    ];
+
 
     public function users()
     {
@@ -38,6 +42,11 @@ class Centro extends Model
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
+    }
+
+    public function administradors()
+    {
+        return $this->belongsToMany(User::class);
     }
 
     // public function clientes()

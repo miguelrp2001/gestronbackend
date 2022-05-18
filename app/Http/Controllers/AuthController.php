@@ -93,7 +93,7 @@ class AuthController extends Controller
     public function userProfile()
     {
         // dd(['status' => 'ok', 'data' => ['user' => Auth::user()]]);
-        return response()->json(['status' => 'ok', 'data' => ['user' => Auth::user()]]);
+        return response()->json(['status' => 'ok', 'data' => ['user' => Auth::user(), 'centros' => Auth::user()->centros]]);
     }
 
     public function sendmail(Request $request)

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CentroController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -40,4 +41,19 @@ Route::group([
     Route::post('/{user}/alternate', [UserController::class, 'alternateUser']);
     Route::post('/{user}/edit', [UserController::class, 'editUser']);
     Route::post('/{user}/logout', [UserController::class, 'logAllOut']);
+});
+
+Route::group([
+    'middleware' => ['api', 'auth:sanctum', 'admin'],
+    'prefix' => 'centros'
+], function ($router) {
+    Route::get('/list', [CentroController::class, 'index']);
+    Route::get('/{centro}', [CentroController::class, 'show']);
+    Route::get('/{centro}/admins', [CentroController::class, 'admins']);
+    Route::post('/{centro}/admins', [CentroController::class, 'addAdmins']);
+    Route::delete('/{centro}/admins/{user}', [CentroController::class, 'delAdmins']);
+    Route::get('/{centro}/notadmins', [CentroController::class, 'getNotAdmins']);
+    Route::post('/{centro}/status', [CentroController::class, 'chgStatusCentro']);
+    Route::post('/{centro}/edit', [CentroController::class, 'editCentro']);
+    Route::post('/create', [CentroController::class, 'store']);
 });
