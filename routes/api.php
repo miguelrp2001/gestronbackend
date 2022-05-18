@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ArticuloController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CentroController;
 use App\Http\Controllers\UserController;
@@ -25,7 +26,7 @@ Route::group([
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    // Route::post('/refresh', [AuthController::class, 'refresh']);
+    Route::post('/sendMail', [AuthController::class, 'sendMail']);
     Route::get('/user-profile', [AuthController::class, 'userProfile']);
     Route::any('/noAuth', [AuthController::class, 'notValidToken'])->name('login');
 });
@@ -56,4 +57,11 @@ Route::group([
     Route::post('/{centro}/status', [CentroController::class, 'chgStatusCentro']);
     Route::post('/{centro}/edit', [CentroController::class, 'editCentro']);
     Route::post('/create', [CentroController::class, 'store']);
+});
+
+Route::group([
+    'middleware' => ['api', 'auth:sanctum'],
+    'prefix' => 'articulos'
+], function ($router) {
+    Route::get('/{centro}/list', [ArticuloController::class, 'index']);
 });

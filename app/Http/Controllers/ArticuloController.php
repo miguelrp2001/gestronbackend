@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Articulo;
+use App\Models\Centro;
 use Illuminate\Http\Request;
 
 class ArticuloController extends Controller
@@ -11,16 +12,23 @@ class ArticuloController extends Controller
     {
         $this->middleware('auth:sanctum');
         $this->middleware('userActive');
-        $this->middleware('userAdminCenter')
+        $this->middleware('userAdminCenter');
     }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($centro)
     {
-        //
+        $centroBuscado = Centro::find($centro);
+        if (!$centroBuscado) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
+
+        $articulos = $centroBuscado->articulos;
+
+        return response()->json(['status' => 'ok', 'data' => ['articulos' => $articulos]], 200);
     }
 
     /**

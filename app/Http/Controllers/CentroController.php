@@ -12,6 +12,7 @@ class CentroController extends Controller
     {
         $this->middleware('auth:sanctum');
         $this->middleware('userActive');
+        $this->middleware('admin');
     }
     /**
      * Display a listing of the resource.

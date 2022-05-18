@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\Admin;
 use App\Http\Middleware\userActive;
+use App\Http\Middleware\userAdmin;
 use App\Http\Middleware\userAdminCenter;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\codigoConfirmacion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -98,12 +99,14 @@ class AuthController extends Controller
 
     public function sendmail(Request $request)
     {
-        $usr = $request->userr;
-        $user = User::findOrFail($usr);
+        // $usr = $request->userr;
+        // $user = User::findOrFail($usr);
         // $user->sendEmailVerificationNotification();
-        Password::sendResetLink(
-            ["email" => $user->email]
-        );
+        // Password::sendResetLink(
+        //     ["email" => $user->email]
+        // );
+
+        Mail::to(Auth::user())->send(new codigoConfirmacion());
         return response()->json(['status' => 'ok', 'data' => ['mensaje' => "Correo enviado."]]);
     }
 }

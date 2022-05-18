@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Centro;
 use App\Models\Cliente;
 use Illuminate\Http\Request;
 
@@ -17,9 +18,16 @@ class ClienteController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($centro)
     {
-        //
+        $centroBuscado = Centro::find($centro);
+        if (!$centroBuscado) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
+
+        $clientes = $centroBuscado->clientes;
+
+        return response()->json(['status' => 'ok', 'data' => ['clientes' => $clientes]], 200);
     }
 
     /**

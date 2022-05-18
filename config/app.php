@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'GestrónBackendServer'),
+    'name' => env('APP_NAME', 'Gestrón'),
 
     /*
     |--------------------------------------------------------------------------
