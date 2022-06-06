@@ -3,7 +3,9 @@
 use App\Http\Controllers\ArticuloController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CentroController;
+use App\Http\Controllers\FamiliaController;
 use App\Http\Controllers\UserController;
+use App\Models\Familia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -64,4 +66,14 @@ Route::group([
     'prefix' => 'articulos'
 ], function ($router) {
     Route::get('/{centro}/list', [ArticuloController::class, 'index']);
+    Route::post('/{articulo}/status', [ArticuloController::class, 'chgStatusArticulo']);
+    Route::post('/{articulo}/edit', [ArticuloController::class, 'update']);
+});
+
+Route::group([
+    'middleware' => ['api', 'auth:sanctum'],
+    'prefix' => 'familias'
+], function ($router) {
+    Route::get('/{centro}/list', [FamiliaController::class, 'index']);
+    // Route::post('/{articulo}/status', [ArticuloController::class, 'chgStatusArticulo']);
 });

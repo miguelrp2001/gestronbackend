@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Centro;
 use App\Models\Familia;
 use Illuminate\Http\Request;
 
@@ -17,9 +18,16 @@ class FamiliaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($centro)
     {
-        //
+        $centroBuscado = Centro::find($centro);
+        if (!$centroBuscado) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
+
+        $familias = $centroBuscado->familias;
+
+        return response()->json(['status' => 'ok', 'data' => ['familias' => $familias]], 200);
     }
 
     /**

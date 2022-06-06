@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Centro;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CentroController extends Controller
 {
@@ -197,5 +198,29 @@ class CentroController extends Controller
         }
 
         return response()->json(['status' => "ok", "data" => ['users' =>  $usersSend]]);
+    }
+
+    /**
+     * Verifica si un centro es tuyo.
+     *
+     * @param  \App\Models\Centro  $centro
+     * @return boolean
+     */
+    public function deTusCentros($centro)
+    {
+        $centroBd = Centro::find($centro);
+
+        if (!$centroBd) {
+            return false;
+        }
+
+
+        foreach (Auth::user()->centros as $centro) {
+            if ($centroBd->id == $centro->id) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

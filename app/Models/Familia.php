@@ -9,6 +9,15 @@ class Familia extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'centro_id'
+    ];
+
     public function articulos()
     {
         return $this->hasMany(Articulo::class);
