@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\CentroController;
 use App\Rules\inCentro;
+use App\Rules\inCentroNuevo;
 
 class ArticuloController extends Controller
 {
@@ -42,7 +43,23 @@ class ArticuloController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $articuloBD = new Articulo();
+
+        $validated = $request->validate([
+            'nombre' => ['required', 'string', 'max:25', 'min:1'],
+            'nombre_corto' => ['required', 'string', 'max:15', 'min:1'],
+            'color' => ['required', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
+            'familia' => ['required', 'integer', new inCentroNuevo]
+        ]);
+
+
+        $articuloBD->nombre = $validated['nombre'];
+        $articuloBD->nombre_corto = $validated['nombre_corto'];
+        $articuloBD->color = $validated['color'];
+        $articuloBD->familia_id = $validated['familia'];
+        $articuloBD->save();
+        return response()->json(['status' => "ok", "data" => ['articulo' => $articuloBD]], 200);
     }
 
     /**
@@ -51,9 +68,15 @@ class ArticuloController extends Controller
      * @param  \App\Models\Articulo  $articulo
      * @return \Illuminate\Http\Response
      */
-    public function show(Articulo $articulo)
+    public function show($articulo)
     {
-        //
+        $articuloBD = Articulo::find($articulo);
+
+        if (!$articuloBD || !$this->articuloDeTuCentro($articuloBD->id)) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
+
+        return response()->json(['status' => "ok", "data" => ['mensaje' => $articuloBD]], 200);
     }
 
 
@@ -80,7 +103,6 @@ class ArticuloController extends Controller
             $articuloBD->estado = ($articuloBD->estado == 'i' ? 'a' : 'i');
         }
 
-
         $articuloBD->save();
 
         return response()->json(['status' => "ok", "data" => ['mensaje' => ($articuloBD->estado == 'a' ? true : false)]], 200);
@@ -106,8 +128,8 @@ class ArticuloController extends Controller
         $validated = $request->validate([
             'nombre' => ['required', 'string', 'max:25', 'min:1'],
             'nombre_corto' => ['required', 'string', 'max:15', 'min:1'],
-            'color' => ['required', 'string', 'regex:/^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
-            'familia' => ['required', 'string', new inCentro]
+            'color' => ['required', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
+            'familia' => ['required', 'integer', new inCentro]
         ]);
 
 
@@ -115,7 +137,7 @@ class ArticuloController extends Controller
         $articuloBD->nombre_corto = $validated['nombre_corto'];
         $articuloBD->color = $validated['color'];
         $articuloBD->familia_id = $validated['familia'];
-        $articuloBD->save;
+        $articuloBD->save();
         return response()->json(['status' => "ok", "data" => ['user' => $articuloBD]], 200);
     }
 
@@ -139,17 +161,10 @@ class ArticuloController extends Controller
     {
         $artBd = Articulo::find($articulo);
 
-        if (!$artBd) {
+        if (!$artBd || !(new CentroController)->deTusCentros($artBd->familia->centro->id)) {
             return false;
         }
 
-
-        foreach (Auth::user()->centros as $centro) {
-            if ($artBd->familia->centro->id == $centro->id) {
-                return true;
-            }
-        }
-
-        return false;
+        return true;
     }
 }

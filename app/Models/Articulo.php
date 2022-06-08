@@ -9,6 +9,16 @@ class Articulo extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'familia_id' => 'integer'
+    ];
+
+
     public function familia()
     {
         return $this->belongsTo(Familia::class);

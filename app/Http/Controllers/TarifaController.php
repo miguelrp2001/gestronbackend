@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Centro;
 use App\Models\Tarifa;
 use Illuminate\Http\Request;
 
@@ -17,19 +18,16 @@ class TarifaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($centro)
     {
-        //
-    }
+        $centroBuscado = Centro::find($centro);
+        if (!$centroBuscado || !(new CentroController)->deTusCentros($centroBuscado->id)) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $tarifas = $centroBuscado->tarifas;
+
+        return response()->json(['status' => 'ok', 'data' => ['familias' => $tarifas]], 200);
     }
 
     /**
@@ -49,20 +47,14 @@ class TarifaController extends Controller
      * @param  \App\Models\Tarifa  $tarifa
      * @return \Illuminate\Http\Response
      */
-    public function show(Tarifa $tarifa)
+    public function show($tarifa)
     {
-        //
-    }
+        $tarifaBD = Tarifa::find($tarifa);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Tarifa  $tarifa
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Tarifa $tarifa)
-    {
-        //
+        if (!$tarifaBD || !(new CentroController)->deTusCentros($tarifaBD->centro->id)) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
+        return response()->json(['status' => "ok", "data" => ['tarifa' => $tarifaBD, 'precios' => $tarifaBD->precios]], 200);
     }
 
     /**
@@ -72,18 +64,7 @@ class TarifaController extends Controller
      * @param  \App\Models\Tarifa  $tarifa
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Tarifa $tarifa)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Tarifa  $tarifa
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Tarifa $tarifa)
+    public function update(Request $request, $tarifa)
     {
         //
     }

@@ -2,22 +2,12 @@
 
 namespace App\Rules;
 
-use App\Models\Articulo;
 use App\Models\Familia;
-use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 
-class inCentro implements Rule, DataAwareRule
+class inCentroNuevo implements Rule
 {
-    /**
-     * All of the data under validation.
-     *
-     * @var array
-     */
-    protected $data = [];
-
-
     /**
      * Create a new rule instance.
      *
@@ -37,15 +27,19 @@ class inCentro implements Rule, DataAwareRule
      */
     public function passes($attribute, $value)
     {
-        $articuloB = Articulo::find($this->data['id']);
         $familiaB = Familia::find($value);
-        if (!$articuloB || !$familiaB) {
+        if (!$familiaB) {
             return false;
         }
 
-        if ($articuloB->familia->centro->id == $familiaB->centro->id) {
-            return true;
+        foreach (Auth::user()->centros as $centro) {
+            foreach ($centro->familias as $familia) {
+                if ($familia->id === $value) {
+                    return true;
+                }
+            }
         }
+
         return false;
     }
 
@@ -56,19 +50,6 @@ class inCentro implements Rule, DataAwareRule
      */
     public function message()
     {
-        return 'La :attribute seleccionada no pertenece al centro del articulo.';
-    }
-
-    /**
-     * Set the data under validation.
-     *
-     * @param  array  $data
-     * @return $this
-     */
-    public function setData($data)
-    {
-        $this->data = $data;
-
-        return $this;
+        return 'La :attribute seleccionada no pertenece a ningún centro del usuario.';
     }
 }

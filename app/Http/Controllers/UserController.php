@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Hamcrest\Type\IsBoolean;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -49,6 +50,10 @@ class UserController extends Controller
 
         if (!$userBD) {
             return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
+
+        if (Auth::user()->id == $userBD->id) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No puedes cambiar el estado de tu propia cuenta."]], 422);
         }
 
         if ($request->estado && is_bool($request->estado)) {

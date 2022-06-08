@@ -36,7 +36,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'ipUltLogin',
         'created_at',
         'updated_at',
-        'id',
         'activo',
         'email_verified_at'
     ];

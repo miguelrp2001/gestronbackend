@@ -41,8 +41,8 @@ Route::group([
 ], function ($router) {
     Route::get('/list', [UserController::class, 'getUsers']);
     Route::get('/{user}', [UserController::class, 'getUser']);
-    Route::post('/{user}/alternate', [UserController::class, 'alternateUser']);
-    Route::post('/{user}/edit', [UserController::class, 'editUser']);
+    Route::put('/{user}/alternate', [UserController::class, 'alternateUser']);
+    Route::put('/{user}/edit', [UserController::class, 'editUser']);
     Route::post('/{user}/logout', [UserController::class, 'logAllOut']);
 });
 
@@ -56,8 +56,8 @@ Route::group([
     Route::post('/{centro}/admins', [CentroController::class, 'addAdmins']);
     Route::delete('/{centro}/admins/{user}', [CentroController::class, 'delAdmins']);
     Route::get('/{centro}/notadmins', [CentroController::class, 'getNotAdmins']);
-    Route::post('/{centro}/status', [CentroController::class, 'chgStatusCentro']);
-    Route::post('/{centro}/edit', [CentroController::class, 'editCentro']);
+    Route::put('/{centro}/status', [CentroController::class, 'chgStatusCentro']);
+    Route::put('/{centro}/edit', [CentroController::class, 'editCentro']);
     Route::post('/create', [CentroController::class, 'store']);
 });
 
@@ -66,8 +66,10 @@ Route::group([
     'prefix' => 'articulos'
 ], function ($router) {
     Route::get('/{centro}/list', [ArticuloController::class, 'index']);
-    Route::post('/{articulo}/status', [ArticuloController::class, 'chgStatusArticulo']);
-    Route::post('/{articulo}/edit', [ArticuloController::class, 'update']);
+    Route::get('/{centro}', [ArticuloController::class, 'show']);
+    Route::put('/{articulo}/status', [ArticuloController::class, 'chgStatusArticulo']);
+    Route::put('/{articulo}/edit', [ArticuloController::class, 'update']);
+    Route::post('/create', [ArticuloController::class, 'store']);
 });
 
 Route::group([
@@ -76,4 +78,8 @@ Route::group([
 ], function ($router) {
     Route::get('/{centro}/list', [FamiliaController::class, 'index']);
     // Route::post('/{articulo}/status', [ArticuloController::class, 'chgStatusArticulo']);
+    Route::get('/{centro}', [FamiliaController::class, 'show']);
+    Route::put('/{familia}/edit', [FamiliaController::class, 'update']);
+    Route::post('/create', [FamiliaController::class, 'store']);
+    Route::delete('/{familia}', [FamiliaController::class, 'destroy']);
 });
