@@ -141,6 +141,34 @@ class ArticuloController extends Controller
         return response()->json(['status' => "ok", "data" => ['user' => $articuloBD]], 200);
     }
 
+
+    /**
+     * Update the familia of the articulo.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Articulo  $articulo
+     * @return \Illuminate\Http\Response
+     */
+    public function updateFamily(Request $request, $articulo)
+    {
+        $articuloBD = Articulo::find($articulo);
+
+        if (!$articuloBD || !$this->articuloDeTuCentro($articuloBD->id)) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
+
+
+
+        $validated = $request->validate([
+            'familia' => ['required', 'integer', new inCentroNuevo]
+        ]);
+
+        $articuloBD->familia_id = $validated['familia'];
+        $articuloBD->save();
+        return response()->json(['status' => "ok", "data" => ['user' => $articuloBD]], 200);
+    }
+
+
     /**
      * Remove the specified resource from storage.
      *
