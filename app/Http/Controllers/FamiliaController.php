@@ -32,6 +32,28 @@ class FamiliaController extends Controller
     }
 
     /**
+     * Display a listing of the resource with childs.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function indexAll($centro)
+    {
+        $centroBuscado = Centro::find($centro);
+        if (!$centroBuscado || !(new CentroController)->deTusCentros($centroBuscado->id)) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
+
+        $familiasRespuesta = [];
+
+
+        foreach ($centroBuscado->familias as $familia) {
+            $familiasRespuesta[] = ['id' => $familia->id, 'nombre' => $familia->nombre, 'articulos' => $familia->articulos];
+        }
+
+        return response()->json(['status' => 'ok', 'data' => ['familias' => $familiasRespuesta]], 200);
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -83,11 +105,9 @@ class FamiliaController extends Controller
         }
 
         $validated = $request->validate([
-            'nombre' => ['required', 'string', 'max:15', 'min:1'],
-            'centro' => ['required', 'integer', new tuCentro]
+            'nombre' => ['required', 'string', 'max:15', 'min:1']
         ]);
         $familiaBD->nombre = $validated['nombre'];
-        $familiaBD->centro_id = $validated['centro'];
         $familiaBD->save();
         return response()->json(['status' => "ok", "data" => ['familia' => $familiaBD]], 200);
     }
@@ -111,6 +131,6 @@ class FamiliaController extends Controller
         }
 
         Familia::destroy($familiaBD->id);
-        return response()->json(['status' => "ok", "data" => ['mensaje' =>  "Familia eliminada"]], 404);
+        return response()->json(['status' => "ok", "data" => ['mensaje' =>  "Familia eliminada"]], 200);
     }
 }

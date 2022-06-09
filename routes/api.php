@@ -69,6 +69,7 @@ Route::group([
     Route::get('/{centro}', [ArticuloController::class, 'show']);
     Route::put('/{articulo}/status', [ArticuloController::class, 'chgStatusArticulo']);
     Route::put('/{articulo}/edit', [ArticuloController::class, 'update']);
+    Route::put('/{articulo}/editFamilia', [ArticuloController::class, 'updateFamily']);
     Route::post('/create', [ArticuloController::class, 'store']);
 });
 
@@ -77,6 +78,7 @@ Route::group([
     'prefix' => 'familias'
 ], function ($router) {
     Route::get('/{centro}/list', [FamiliaController::class, 'index']);
+    Route::get('/{centro}/listAll', [FamiliaController::class, 'indexAll']);
     // Route::post('/{articulo}/status', [ArticuloController::class, 'chgStatusArticulo']);
     Route::get('/{centro}', [FamiliaController::class, 'show']);
     Route::put('/{familia}/edit', [FamiliaController::class, 'update']);
