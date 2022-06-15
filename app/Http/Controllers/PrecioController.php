@@ -12,58 +12,6 @@ class PrecioController extends Controller
         $this->middleware('auth:sanctum');
         $this->middleware('userActive');
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Precio  $precio
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Precio $precio)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Precio  $precio
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Precio $precio)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -72,9 +20,24 @@ class PrecioController extends Controller
      * @param  \App\Models\Precio  $precio
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Precio $precio)
+    public function update(Request $request, $precio)
     {
-        //
+        $precioBD = Precio::find($precio);
+
+        if (!$precioBD || !(new CentroController)->deTusCentros($precioBD->articulo->familia->centro->id)) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
+
+        $validatedReq = $request->validate([
+            'precio' => 'required|numeric|gte:0',
+            'impuesto_id' => 'required|exists:impuestos,id',
+        ]);
+
+        $precioBD->precio = $validatedReq['precio'];
+        $precioBD->impuesto_id = $validatedReq['impuesto_id'];
+        $precioBD->save();
+
+        return response()->json(['status' => 'ok', 'data' => ['precio' => $precioBD]], 200);
     }
 
     /**
@@ -83,8 +46,15 @@ class PrecioController extends Controller
      * @param  \App\Models\Precio  $precio
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Precio $precio)
+    public function destroy($precio)
     {
-        //
+        $precioBD = Precio::find($precio);
+
+        if (!$precioBD || !(new CentroController)->deTusCentros($precioBD->tarifa->centro->id)) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
+
+        $precioBD->delete();
+        return response()->json(['status' => "ok", "data" => ['mensaje' =>  "Eliminado"]], 200);
     }
 }

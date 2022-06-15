@@ -4,9 +4,10 @@ use App\Http\Controllers\ArticuloController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CentroController;
 use App\Http\Controllers\FamiliaController;
+use App\Http\Controllers\TarifaController;
 use App\Http\Controllers\UserController;
-use App\Models\Familia;
-use Illuminate\Http\Request;
+use App\Http\Controllers\ImpuestoController;
+use App\Http\Controllers\PrecioController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -84,4 +85,64 @@ Route::group([
     Route::put('/{familia}/edit', [FamiliaController::class, 'update']);
     Route::post('/create', [FamiliaController::class, 'store']);
     Route::delete('/{familia}', [FamiliaController::class, 'destroy']);
+});
+
+Route::group([
+    'middleware' => ['api', 'auth:sanctum'],
+    'prefix' => 'tarifas'
+], function ($router) {
+    Route::get('/{centro}/list', [TarifaController::class, 'index']);
+    Route::get('/{centro}', [TarifaController::class, 'show']);
+    Route::get('/{tarifa}/articulos', [TarifaController::class, 'getArticulos']);
+    Route::get('/{tarifa}/notArticulos', [TarifaController::class, 'getNotArticulos']);
+    Route::put('/{tarifa}/edit', [TarifaController::class, 'update']);
+    Route::post('/create', [TarifaController::class, 'store']);
+    Route::post('/{tarifa}/articulos', [TarifaController::class, 'addArticulo']);
+    Route::delete('/{tarifa}', [TarifaController::class, 'destroy']);
+});
+
+Route::group([
+    'middleware' => ['api', 'auth:sanctum'],
+    'prefix' => 'impuestos'
+], function ($router) {
+    Route::get('/list', [ImpuestoController::class, 'index']);
+});
+
+Route::group([
+    'middleware' => ['api', 'auth:sanctum'],
+    'prefix' => 'precios'
+], function ($router) {
+    Route::put('/{precio}/edit', [PrecioController::class, 'update']);
+    Route::delete('/{precio}', [PrecioController::class, 'destroy']);
+});
+
+Route::group([
+    'middleware' => ['api', 'auth:sanctum'],
+    'prefix' => 'perfiles'
+], function ($router) {
+    Route::get('/{centro}/list', [TrabajadorController::class, 'index']);
+    Route::put('/{trabajador}/edit', [TrabajadorController::class, 'update']);
+    Route::post('/create', [TrabajadorController::class, 'store']);
+    Route::delete('/{trabajador}', [TrabajadorController::class, 'destroy']);
+});
+
+Route::group([
+    'middleware' => ['api', 'auth:sanctum'],
+    'prefix' => 'clientes'
+], function ($router) {
+    Route::get('/{centro}/list', [ClienteController::class, 'index']);
+    Route::get('/{cliente}', [ClienteController::class, 'show']);
+    Route::put('/{cliente}/edit', [ClienteController::class, 'update']);
+    Route::post('/create', [ClienteController::class, 'store']);
+    Route::delete('/{cliente}', [ClienteController::class, 'destroy']);
+});
+
+Route::group([
+    'middleware' => ['api', 'auth:sanctum'],
+    'prefix' => 'puntosVenta'
+], function ($router) {
+    Route::get('/{centro}/list', [PosController::class, 'index']);
+    Route::put('/{pos}/edit', [PosController::class, 'update']);
+    Route::post('/create', [PosController::class, 'store']);
+    Route::delete('/{pos}', [PosController::class, 'destroy']);
 });

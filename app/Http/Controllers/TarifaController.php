@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Articulo;
 use App\Models\Centro;
+use App\Models\Impuesto;
 use App\Models\Tarifa;
+use App\Rules\tuCentro;
 use Illuminate\Http\Request;
 
 class TarifaController extends Controller
@@ -27,7 +30,7 @@ class TarifaController extends Controller
 
         $tarifas = $centroBuscado->tarifas;
 
-        return response()->json(['status' => 'ok', 'data' => ['familias' => $tarifas]], 200);
+        return response()->json(['status' => 'ok', 'data' => ['tarifas' => $tarifas]], 200);
     }
 
     /**
@@ -38,7 +41,18 @@ class TarifaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedRequest = $request->validate([
+            'centro_id' => ['required', 'integer', new tuCentro],
+            'nombre' => ['required', 'string', 'max:30'],
+        ]);
+
+        $nuevaTarifa = new Tarifa();
+        $nuevaTarifa->nombre = $validatedRequest['nombre'];
+        $nuevaTarifa->centro_id = $validatedRequest['centro_id'];
+
+        $nuevaTarifa->save();
+
+        return response()->json(['status' => 'ok', 'data' => ['tarifa' => $nuevaTarifa]], 200);
     }
 
     /**
@@ -54,6 +68,18 @@ class TarifaController extends Controller
         if (!$tarifaBD || !(new CentroController)->deTusCentros($tarifaBD->centro->id)) {
             return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
         }
+
+        $precios = [];
+
+        foreach ($tarifaBD->precios as $precio) {
+            $precios[] = [
+                'id' => $precio->id,
+                'articulo' => $precio->articulo,
+                'precio' => $precio->precio,
+                'impuesto' => $precio->impuesto,
+            ];
+        }
+
         return response()->json(['status' => "ok", "data" => ['tarifa' => $tarifaBD, 'precios' => $tarifaBD->precios]], 200);
     }
 
@@ -66,6 +92,91 @@ class TarifaController extends Controller
      */
     public function update(Request $request, $tarifa)
     {
-        //
+        $validatedRequest = $request->validate([
+            'nombre' => ['required', 'string', 'max:30'],
+        ]);
+
+        $tarifaBD = Tarifa::find($tarifa);
+
+        if (!$tarifaBD || !(new CentroController)->deTusCentros($tarifaBD->centro->id)) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
+
+        $tarifaBD->nombre = $validatedRequest['nombre'];
+
+        $tarifaBD->save();
+
+        return response()->json(['status' => 'ok', 'data' => ['tarifa' => $tarifaBD]], 200);
+    }
+
+    public function getNotArticulos($tarifa)
+    {
+        $tarifaBD = Tarifa::find($tarifa);
+
+        if (!$tarifaBD || !(new CentroController)->deTusCentros($tarifaBD->centro->id)) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
+
+        $articulos = [];
+        $pluckIDs = $tarifaBD->precios->pluck('articulo_id')->toArray();
+        foreach ($tarifaBD->centro->articulos as $articulo) {
+            if (!in_array($articulo->id, $pluckIDs)) {
+                $articulos[] = $articulo;
+            }
+        }
+
+        return response()->json(['status' => "ok", "data" => ['articulos' => $articulos]], 200);
+    }
+
+    public function getArticulos($tarifa)
+    {
+        $tarifaBD = Tarifa::find($tarifa);
+
+        if (!$tarifaBD || !(new CentroController)->deTusCentros($tarifaBD->centro->id)) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
+
+        $articulos = [];
+
+        foreach ($tarifaBD->precios as $precio) {
+            $articulos[] = $precio->articulo;
+        }
+
+        return response()->json(['status' => "ok", "data" => ['articulos' => $articulos]], 200);
+    }
+
+    public function addArticulo($tarifa, Request $request)
+    {
+        $tarifaBD = Tarifa::find($tarifa);
+
+        if (!$tarifaBD || !(new CentroController)->deTusCentros($tarifaBD->centro->id)) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
+
+        if ($request->has('articulos') && sizeof($request->articulos) > 0) {
+
+            foreach ($request->articulos as $articulo) {
+                $articuloBD = Articulo::find($articulo);
+                if ($articuloBD && (new CentroController)->deTusCentros($articuloBD->familia->centro->id) && !$this->inTarifa($tarifaBD, $articuloBD)) {
+                    $tarifaBD->precios()->create([
+                        'articulo_id' => $articuloBD->id,
+                        'precio' => 0,
+                        'impuesto_id' => 1,
+                    ]);
+                }
+            }
+        }
+
+        return response()->json(['status' => "ok", "data" => ['mensaje' => "Añadidos satisfactoriamente"]], 200);
+    }
+
+    private function inTarifa(Tarifa $tarifa, Articulo $articulo,)
+    {
+        foreach ($tarifa->precios as $precio) {
+            if ($precio->articulo_id == $articulo->id) {
+                return true;
+            }
+        }
+        return false;
     }
 }

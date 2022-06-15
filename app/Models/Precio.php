@@ -9,6 +9,10 @@ class Precio extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'articulo_id', 'precio', 'impuesto_id', 'tarifa_id'
+    ];
+
     public function tarifa()
     {
         return $this->belongsTo(Tarifa::class);

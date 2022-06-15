@@ -53,7 +53,6 @@ class ArticuloController extends Controller
             'familia' => ['required', 'integer', new inCentroNuevo]
         ]);
 
-
         $articuloBD->nombre = $validated['nombre'];
         $articuloBD->nombre_corto = $validated['nombre_corto'];
         $articuloBD->color = $validated['color'];
@@ -96,7 +95,6 @@ class ArticuloController extends Controller
             return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
         }
 
-
         if ($request->estado && is_bool($request->estado)) {
             $articuloBD->estado = ($request->estado ? 'a' : 'i');
         } else {
@@ -122,8 +120,6 @@ class ArticuloController extends Controller
         if (!$articuloBD || !$this->articuloDeTuCentro($articuloBD->id)) {
             return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
         }
-
-
 
         $validated = $request->validate([
             'nombre' => ['required', 'string', 'max:25', 'min:1'],
@@ -169,16 +165,6 @@ class ArticuloController extends Controller
     }
 
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Articulo  $articulo
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Articulo $articulo)
-    {
-        //
-    }
     /**
      * Verifica si un artículo es de tu centro.
      *

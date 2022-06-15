@@ -49,8 +49,13 @@ class Centro extends Model
         return $this->belongsToMany(User::class);
     }
 
-    // public function clientes()
-    // {
-    //     return $this->hasMany(Cliente::class);
-    // }
+    public function tarifaSeleccionada()
+    {
+        return $this->belongsTo(Tarifa::class, 'tarifaSeleccionada', 'id');
+    }
+
+    public function clientes()
+    {
+        return $this->hasMany(Cliente::class);
+    }
 }
