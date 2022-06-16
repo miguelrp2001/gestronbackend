@@ -31,16 +31,6 @@ class ClienteController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -48,7 +38,33 @@ class ClienteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $requValidated = $request->validate([
+            'nombre' => 'required|string|max:25',
+            'centro_id' => ['required', 'integer', 'exists:centros,id'],
+            'direccion' => 'required|string|max:150',
+            'nif' => 'required|string|max:9|unique:clientes,nif',
+            'nombre_fiscal' => 'required|string|max:25',
+            'telefono' => 'required|string|max:15',
+            'correo' => 'required|string|max:120',
+        ]);
+
+        if (!(new CentroController)->deTusCentros($requValidated['centro_id'])) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
+
+        $nuevoCliente = new Cliente([
+            'nombre' => $requValidated['nombre'],
+            'centro_id' => $requValidated['centro_id'],
+            'direccion' => $requValidated['direccion'],
+            'nif' => $requValidated['nif'],
+            'nombre_fiscal' => $requValidated['nombre_fiscal'],
+            'telefono' => $requValidated['telefono'],
+            'correo' => $requValidated['correo'],
+        ]);
+
+        $nuevoCliente->save();
+
+        return response()->json(['status' => 'ok', 'data' => ['cliente' => $nuevoCliente]], 200);
     }
 
     /**
@@ -63,36 +79,58 @@ class ClienteController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Cliente  $cliente
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Cliente $cliente)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Cliente  $cliente
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Cliente $cliente)
+    public function update(Request $request, $cliente)
     {
-        //
+        $clienteBD = Cliente::find($cliente);
+
+        if (!$clienteBD || (!(new CentroController)->deTusCentros($clienteBD->centro_id))) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
+
+        $requValidated = $request->validate([
+            'nombre' => 'required|string|max:25',
+            'direccion' => 'required|string|max:150',
+            'nif' => 'required|string|max:9',
+            'nombre_fiscal' => 'required|string|max:25',
+            'telefono' => 'required|string|max:15',
+            'correo' => 'required|string|max:120',
+        ]);
+
+        $clienteBD->nombre = $requValidated['nombre'];
+        $clienteBD->direccion = $requValidated['direccion'];
+        $clienteBD->nif = $requValidated['nif'];
+        $clienteBD->nombre_fiscal = $requValidated['nombre_fiscal'];
+        $clienteBD->telefono = $requValidated['telefono'];
+        $clienteBD->correo = $requValidated['correo'];
+
+        $clienteBD->save();
+
+        return response()->json(['status' => 'ok', 'data' => ['cliente' => $clienteBD]], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Cliente  $cliente
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Cliente $cliente)
+
+    public function updateStatusCorreo($trabajador, Request $request)
     {
-        //
+        $clienteBD = Cliente::find($trabajador);
+
+        if (!$clienteBD && !(new CentroController)->deTusCentros($clienteBD->centro->id)) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
+
+        $validatedReq = $request->validate([
+            'estado' => 'required|boolean',
+        ]);
+
+        $clienteBD->ticketCorreo = $validatedReq['estado'];
+
+        $clienteBD->save();
+
+        return response()->json(['status' => "ok", "data" => ['mensaje' => $clienteBD->ticketCorreo]], 200);
     }
 }

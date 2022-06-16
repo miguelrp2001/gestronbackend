@@ -25,7 +25,7 @@ class TrabajadorController extends Controller
         if (!$centroBuscado || !(new CentroController)->deTusCentros($centroBuscado->id)) {
             return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
         }
-        $perfiles = $centroBuscado->trabajadores;
+        $perfiles = Trabajador::where('centro_id', $centroBuscado->id)->get();
 
         return response()->json(['status' => 'ok', 'data' => ['perfiles' => $perfiles]], 200);
     }
@@ -40,13 +40,13 @@ class TrabajadorController extends Controller
     {
         $requValidated = $request->validate([
             'nombre' => 'required|string|max:15',
-            'clave' => 'nullable|numeric|min:4|max:16',
-            'centro' => ['required', 'integer', 'exists:centros,id', new tuCentro],
+            'clave' => ['nullable', 'integer', 'min:0', 'max:9999999999999999'],
+            'centro_id' => ['required', 'integer', 'exists:centros,id', new tuCentro],
         ]);
 
         $nuevoPerfil = new Trabajador([
             'nombre' => $requValidated['nombre'],
-            'centro_id' => $requValidated['centro'],
+            'centro_id' => $requValidated['centro_id'],
         ]);
 
         if ($requValidated['clave']) {
@@ -90,7 +90,7 @@ class TrabajadorController extends Controller
 
         $validatedReq = $request->validate([
             'nombre' => 'required|string|max:15',
-            'clave' => 'nullable|numeric|min:4|max:16',
+            'clave' => ['nullable', 'integer', 'min:0', 'max:9999999999999999'],
         ]);
 
         $perfilBD->nombre = $validatedReq['nombre'];
@@ -102,6 +102,25 @@ class TrabajadorController extends Controller
         $perfilBD->save();
 
         return response()->json(['status' => "ok", "data" => ['perfil' => $perfilBD]], 200);
+    }
+
+    public function chgStatus($trabajador, Request $request)
+    {
+        $perfilBD = Trabajador::find($trabajador);
+
+        if (!$perfilBD && !(new CentroController)->deTusCentros($perfilBD->centro->id)) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
+
+        $validatedReq = $request->validate([
+            'estado' => 'required|boolean',
+        ]);
+
+        $perfilBD->activo = $validatedReq['estado'];
+
+        $perfilBD->save();
+
+        return response()->json(['status' => "ok", "data" => ['mensaje' => $perfilBD->activo]], 200);
     }
 
     /**

@@ -13,4 +13,18 @@ class Cliente extends Model
     {
         return $this->hasMany(Ticket::class);
     }
+
+    protected $fillable = [
+        'nombre',
+        'centro_id',
+        'direccion',
+        'nif',
+        'nombre_fiscal',
+        'telefono',
+        'correo'
+    ];
+
+    protected $casts = [
+        'ticketCorreo' => 'boolean',
+    ];
 }

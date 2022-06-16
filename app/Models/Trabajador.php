@@ -17,6 +17,16 @@ class Trabajador extends Model
         'clave'
     ];
 
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'activo' => 'boolean'
+    ];
+
     public function lineas()
     {
         return $this->hasMany(Linea::class);

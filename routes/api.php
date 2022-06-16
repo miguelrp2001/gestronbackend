@@ -5,6 +5,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CentroController;
 use App\Http\Controllers\FamiliaController;
 use App\Http\Controllers\TarifaController;
+use App\Http\Controllers\TrabajadorController;
+use App\Http\Controllers\POSController;
+use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ImpuestoController;
 use App\Http\Controllers\PrecioController;
@@ -122,6 +125,7 @@ Route::group([
 ], function ($router) {
     Route::get('/{centro}/list', [TrabajadorController::class, 'index']);
     Route::put('/{trabajador}/edit', [TrabajadorController::class, 'update']);
+    Route::put('/{trabajador}/status', [TrabajadorController::class, 'chgStatus']);
     Route::post('/create', [TrabajadorController::class, 'store']);
     Route::delete('/{trabajador}', [TrabajadorController::class, 'destroy']);
 });
@@ -135,6 +139,7 @@ Route::group([
     Route::put('/{cliente}/edit', [ClienteController::class, 'update']);
     Route::post('/create', [ClienteController::class, 'store']);
     Route::delete('/{cliente}', [ClienteController::class, 'destroy']);
+    Route::put('/{cliente}/mailstatus', [ClienteController::class, 'updateStatusCorreo']);
 });
 
 Route::group([

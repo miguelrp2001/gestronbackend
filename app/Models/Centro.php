@@ -58,4 +58,9 @@ class Centro extends Model
     {
         return $this->hasMany(Cliente::class);
     }
+
+    public function pos()
+    {
+        return $this->hasMany(POS::class);
+    }
 }
