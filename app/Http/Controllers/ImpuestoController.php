@@ -10,6 +10,7 @@ class ImpuestoController extends Controller
     {
         $this->middleware('auth:sanctum');
         $this->middleware('userActive');
+        $this->middleware('userVerified');
     }
     /**
      * Display a listing of the resource.

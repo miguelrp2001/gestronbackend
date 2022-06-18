@@ -14,6 +14,7 @@ class CentroController extends Controller
         $this->middleware('auth:sanctum');
         $this->middleware('userActive');
         $this->middleware('admin');
+        $this->middleware('userVerified');
     }
     /**
      * Display a listing of the resource.
@@ -38,7 +39,7 @@ class CentroController extends Controller
         $centroAtrib = $request->validate([
             "nombre" => ['required', 'max:60', 'string'],
             "nombre_legal" => ['required', 'max:60', 'string', 'unique:centros,nombre_legal'],
-            "nif" => ['required', 'max:9', 'string', 'unique:centros,cif'],
+            "nif" => ['required', 'max:9', 'string', 'unique:centros,nif'],
             "telefono" => ['required', 'max:9', 'string'],
             "direccion" => ['required', 'max:160', 'string'],
         ]);
@@ -73,9 +74,31 @@ class CentroController extends Controller
      * @param  \App\Models\Centro  $centro
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Centro $centro)
+    public function update(Request $request, $centro)
     {
-        //
+        $centroBD = Centro::find($centro);
+
+        if (!$centroBD) {
+            return response()->json(['status' => "error", "data" => ['message' => "Centro no encontrado"]], 404);
+        }
+
+        $centroAtrib = $request->validate([
+            "nombre" => ['required', 'max:60', 'string'],
+            "nombre_legal" => ['required', 'max:60', 'string', 'unique:centros,nombre_legal'],
+            "nif" => ['required', 'max:9', 'string', 'unique:centros,nif'],
+            "telefono" => ['required', 'max:9', 'string'],
+            "direccion" => ['required', 'max:160', 'string'],
+        ]);
+
+        $centroBD->update([
+            "nombre" => $centroAtrib['nombre'],
+            "nombre_legal" => $centroAtrib['nombre_legal'],
+            "nif" => $centroAtrib['nif'],
+            "telefono" => $centroAtrib['telefono'],
+            "direccion" => $centroAtrib['direccion'],
+        ]);
+
+        return response()->json(['status' => "ok", "data" => ['centro' => $centroBD]], 200);
     }
 
     /**

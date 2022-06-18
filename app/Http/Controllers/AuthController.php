@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Mail\codigoConfirmacion;
+use App\Mail\loginNuevaIp;
+use App\Mail\usuarioNuevo;
+use App\Models\Centro;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
@@ -19,8 +23,9 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:sanctum', ['except' => ['login', 'register', 'notValidToken', 'sendmail']]);
-        $this->middleware('userActive', ['except' => ['login', 'register', 'notValidToken', 'sendmail']]);
+        $this->middleware('auth:sanctum', ['except' => ['login', 'register', 'notValidToken']]);
+        $this->middleware('userActive', ['except' => ['login', 'register', 'notValidToken']]);
+        $this->middleware('userVerified', ['except' => ['login', 'register', 'notValidToken', 'resendVerificationCode', 'verify']]);
     }
 
 
@@ -40,6 +45,9 @@ class AuthController extends Controller
 
         $authUser = Auth::user();
 
+        if ($authUser->ipUltLogin != $request->ip()) {
+            Mail::to($authUser->email)->send(new loginNuevaIp($authUser));
+        }
 
         $authUser->ipUltLogin = $request->ip();
         $authUser->save();
@@ -58,31 +66,64 @@ class AuthController extends Controller
     }
 
 
-    public function createAccount(Request $request)
+    public function register(Request $request)
     {
         $userAtr = $request->validate(
             [
-                'name' => ['required', 'string', 'max:255'],
+                'nombre' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string', 'max:255', 'email', 'unique:users,email'],
-                'password' => ['required', 'string', 'max:255', 'min:6', 'confirmed']
+                'nif' => ['required', 'max:9', 'string', 'unique:centros,nif'],
+                'password' => ['required', 'string', 'max:255', 'min:6', 'confirmed'],
+                'nombre_legal' => ['required', 'max:60', 'string', 'unique:centros,nombre_legal'],
+                'nombre_empresa' => ['required', 'max:60', 'string'],
+                'telefono' =>  ['required', 'max:9', 'string'],
             ]
         );
 
         $user = User::create([
-            'name' => $userAtr['name'],
+            'name' => $userAtr['nombre'],
             'email' => $userAtr['email'],
             'password' => bcrypt($userAtr['password']),
-            'confirmation_code' => str_random(60),
+            'telefono' => $userAtr['telefono'],
         ]);
 
-        return response()->json(['token' => $user->createToken('tokens')->plainTextToken], 200);
+        $centro = Centro::create([
+            'nombre' => $userAtr['nombre_empresa'],
+            'nombre_legal' => $userAtr['nombre_legal'],
+            'nif' => $userAtr['nif'],
+            'telefono' => $userAtr['telefono'],
+            'direccion' => ". . .",
+        ]);
+
+        $this->sendEmailVerificationNotification($user);
+
+        $admins = User::where('admin', true)->get();
+
+        foreach ($admins as $admin) {
+            Mail::to($admin->email)->send(new usuarioNuevo($centro, $user, $admin));
+        }
+
+
+        $user->ipUltLogin = $request->ip();
+        $user->ipRegistro = $request->ip();
+        $user->save();
+
+        return response()->json(['status' => 'ok', 'data' => ['token' => $user->createToken('SanctumToken')->plainTextToken, 'user' => $user]], 200);
     }
 
     public function logout()
     {
         Auth::user()->tokens()->delete();
 
-        return response()->json(['status' => 'ok', 'data' => ['mensaje' => 'logout']]);
+        return response()->json(['status' => 'ok', 'data' => ['mensaje' => 'logout']], 200);
+    }
+
+    public function resendVerificationCode()
+    {
+        $user = User::find(Auth::id());
+        $this->sendEmailVerificationNotification($user);
+
+        return response()->json(['status' => 'ok', 'data' => ['mensaje' => 'codigo enviado']], 200);
     }
 
 
@@ -93,20 +134,36 @@ class AuthController extends Controller
      */
     public function userProfile()
     {
-        // dd(['status' => 'ok', 'data' => ['user' => Auth::user()]]);
-        return response()->json(['status' => 'ok', 'data' => ['user' => Auth::user(), 'centros' => Auth::user()->centros]]);
+        return response()->json(['status' => 'ok', 'data' => ['user' => Auth::user(), 'centros' => Auth::user()->centros]], 200);
     }
 
-    public function sendmail(Request $request)
-    {
-        // $usr = $request->userr;
-        // $user = User::findOrFail($usr);
-        // $user->sendEmailVerificationNotification();
-        // Password::sendResetLink(
-        //     ["email" => $user->email]
-        // );
 
-        Mail::to(Auth::user())->send(new codigoConfirmacion());
-        return response()->json(['status' => 'ok', 'data' => ['mensaje' => "Correo enviado."]]);
+    private function sendEmailVerificationNotification(User $user)
+    {
+        if (!$user->hasVerifiedEmail()) {
+            return Mail::to($user)->send(new codigoConfirmacion($user));
+        } else {
+            return false;
+        }
+    }
+
+    public function verify(Request $request)
+    {
+        $verRequest = $request->validate(
+            [
+                'vercode' => ['required', 'numeric', 'max:999999']
+            ]
+        );
+
+        if (Auth::user()->codigoConfirmacion == $verRequest['vercode']) {
+            $ussuario = User::find(Auth::user()->id);
+
+            $ussuario->email_verified_at = now();
+            $ussuario->save();
+
+            return response()->json(['status' => 'ok', 'data' => ['mensaje' => 'codigo correcto']], 200);
+        } else {
+            return response()->json(['status' => 'error', 'data' => ['mensaje' => 'codigo incorrecto']], 400);
+        }
     }
 }

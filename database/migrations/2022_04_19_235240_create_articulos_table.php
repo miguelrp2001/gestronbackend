@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('nombre', 25);
             $table->string('nombre_corto', 15);
             $table->string('color', 8)->default("ffffffff");
+            $table->string('codbarras', 50)->nullable();
             $table->foreignIdFor(Familia::class)->references('id')->on('familias')->restrictOnDelete();
             $table->timestamps();
         });

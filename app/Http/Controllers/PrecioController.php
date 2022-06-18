@@ -11,6 +11,7 @@ class PrecioController extends Controller
     {
         $this->middleware('auth:sanctum');
         $this->middleware('userActive');
+        $this->middleware('userVerified');
     }
 
     /**

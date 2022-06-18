@@ -14,6 +14,7 @@ class POSController extends Controller
     {
         $this->middleware('auth:sanctum');
         $this->middleware('userActive');
+        $this->middleware('userVerified');
     }
 
     /**
@@ -57,5 +58,66 @@ class POSController extends Controller
         $nuevoPuntoVenta->save();
 
         return response()->json(['status' => 'ok', 'data' => ['puntoVenta' => $nuevoPuntoVenta]], 200);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\POS  $pos
+     * @return \Illuminate\Http\Response
+     */
+
+    public function update(Request $request, $pos)
+    {
+        $validatedRequest = $request->validate([
+            'nombre' => ['required', 'string', 'max:30'],
+        ]);
+
+        $posBD = POS::find($pos);
+
+        if (!$posBD || !(new CentroController)->deTusCentros($posBD->centro->id)) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
+
+        $posBD->nombre = $validatedRequest['nombre'];
+
+        $posBD->save();
+
+        return response()->json(['status' => 'ok', 'data' => ['puntoVenta' => $posBD]], 200);
+    }
+
+    public function chgStatus($pos, Request $request)
+    {
+        $posBD = POS::find($pos);
+
+        if (!$posBD || !(new CentroController)->deTusCentros($posBD->centro->id)) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
+
+        $validatedReq = $request->validate([
+            'estado' => ['required', 'boolean'],
+        ]);
+
+        $posBD->activo = $validatedReq['estado'];
+
+        $posBD->save();
+
+        return response()->json(['status' => 'ok', 'data' => ['mensaje' => $posBD->activo]], 200);
+    }
+
+    public function regenerarToken($pos)
+    {
+        $posBD = POS::find($pos);
+
+        if (!$posBD || !(new CentroController)->deTusCentros($posBD->centro->id)) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
+
+        $posBD->token = Str::upper(Str::random(60));
+
+        $posBD->save();
+
+        return response()->json(['status' => 'ok', 'data' => ['puntoVenta' => $posBD]], 200);
     }
 }

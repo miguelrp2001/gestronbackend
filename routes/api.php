@@ -35,9 +35,9 @@ Route::group([
     Route::post('/sendMail', [AuthController::class, 'sendMail']);
     Route::get('/user-profile', [AuthController::class, 'userProfile']);
     Route::any('/noAuth', [AuthController::class, 'notValidToken'])->name('login');
+    Route::post('/resendverificationcode', [AuthController::class, 'resendVerificationCode']);
+    Route::post('/verify', [AuthController::class, 'verify']);
 });
-
-Route::post('/mail', [AuthController::class, 'sendmail']);
 
 Route::group([
     'middleware' => ['api', 'auth:sanctum'],
@@ -83,7 +83,6 @@ Route::group([
 ], function ($router) {
     Route::get('/{centro}/list', [FamiliaController::class, 'index']);
     Route::get('/{centro}/listAll', [FamiliaController::class, 'indexAll']);
-    // Route::post('/{articulo}/status', [ArticuloController::class, 'chgStatusArticulo']);
     Route::get('/{centro}', [FamiliaController::class, 'show']);
     Route::put('/{familia}/edit', [FamiliaController::class, 'update']);
     Route::post('/create', [FamiliaController::class, 'store']);
@@ -149,5 +148,6 @@ Route::group([
     Route::get('/{centro}/list', [PosController::class, 'index']);
     Route::put('/{pos}/edit', [PosController::class, 'update']);
     Route::post('/create', [PosController::class, 'store']);
-    Route::delete('/{pos}', [PosController::class, 'destroy']);
+    Route::put('/{pos}/status', [PosController::class, 'chgStatus']);
+    Route::put('/{pos}/regenerarToken', [PosController::class, 'regenerarToken']);
 });

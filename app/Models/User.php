@@ -22,6 +22,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
+        'telefono',
     ];
 
     /**
@@ -37,7 +38,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'created_at',
         'updated_at',
         'activo',
-        'email_verified_at'
+        'email_verified_at',
+        'codigoConfirmacion',
     ];
 
     /**

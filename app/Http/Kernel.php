@@ -71,5 +71,6 @@ class Kernel extends HttpKernel
         'admin' => Admin::class,
         'userActive' => userActive::class,
         'userAdminCenter' => userAdminCenter::class,
+        'userVerified' => \App\Http\Middleware\UserVerified::class,
     ];
 }

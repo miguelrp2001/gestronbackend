@@ -17,6 +17,7 @@ class ArticuloController extends Controller
         $this->middleware('auth:sanctum');
         $this->middleware('userActive');
         $this->middleware('userAdminCenter');
+        $this->middleware('userVerified');
     }
     /**
      * Display a listing of the resource.
@@ -50,13 +51,15 @@ class ArticuloController extends Controller
             'nombre' => ['required', 'string', 'max:25', 'min:1'],
             'nombre_corto' => ['required', 'string', 'max:15', 'min:1'],
             'color' => ['required', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
-            'familia' => ['required', 'integer', new inCentroNuevo]
+            'familia' => ['required', 'integer', new inCentroNuevo],
+            'codbarras' => ['nullable', 'string', 'max:50', 'min:1'],
         ]);
 
         $articuloBD->nombre = $validated['nombre'];
         $articuloBD->nombre_corto = $validated['nombre_corto'];
         $articuloBD->color = $validated['color'];
         $articuloBD->familia_id = $validated['familia'];
+        $articuloBD->codbarras = $validated['codbarras'];
         $articuloBD->save();
         return response()->json(['status' => "ok", "data" => ['articulo' => $articuloBD]], 200);
     }
@@ -125,7 +128,8 @@ class ArticuloController extends Controller
             'nombre' => ['required', 'string', 'max:25', 'min:1'],
             'nombre_corto' => ['required', 'string', 'max:15', 'min:1'],
             'color' => ['required', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
-            'familia' => ['required', 'integer', new inCentro]
+            'familia' => ['required', 'integer', new inCentro],
+            'codBarras' => ['nullable', 'string', 'max:50', 'min:1'],
         ]);
 
 
@@ -133,8 +137,10 @@ class ArticuloController extends Controller
         $articuloBD->nombre_corto = $validated['nombre_corto'];
         $articuloBD->color = $validated['color'];
         $articuloBD->familia_id = $validated['familia'];
+        $articuloBD->codbarras = $validated['codBarras'];
+
         $articuloBD->save();
-        return response()->json(['status' => "ok", "data" => ['user' => $articuloBD]], 200);
+        return response()->json(['status' => "ok", "data" => ['articulo' => $articuloBD]], 200);
     }
 
 

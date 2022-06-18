@@ -15,6 +15,7 @@ class UserController extends Controller
         $this->middleware('admin');
         $this->middleware('userActive');
         $this->middleware('auth:sanctum');
+        $this->middleware('userVerified');
     }
 
     public function getUsers()
@@ -84,11 +85,22 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'max:255', 'email', Rule::unique('users', 'email')->ignore($userBD->id)],
             'telefono' => ['required', 'integer'],
+            'admin' => ['required', 'boolean'],
+            'activo' => ['required', 'boolean'],
         ]);
 
         $userBD->name = $validated['name'];
         $userBD->email = $validated['email'];
         $userBD->telefono = $validated['telefono'];
+
+        if (Auth::user()->id != $userBD->id) {
+            if ($userBD->activo != $validated['activo']) {
+                $userBD->tokens()->delete();
+                $userBD->activo = $validated['activo'];
+            }
+            $userBD->admin = $validated['admin'];
+        }
+
         $userBD->save();
 
         return response()->json(['status' => "ok", "data" => ['user' => $userBD]], 200);
