@@ -164,4 +164,5 @@ Route::group([
     Route::get('/clientes', [gposcontroller::class, 'clientes']);
     Route::get('/perfiles', [gposcontroller::class, 'perfiles']);
     Route::post('/perfil/auth', [gposcontroller::class, 'authTrabajador']);
+    Route::get('/tickets', [gposcontroller::class, 'tickets']);
 });

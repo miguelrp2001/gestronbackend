@@ -73,5 +73,6 @@ class Kernel extends HttpKernel
         'userAdminCenter' => userAdminCenter::class,
         'userVerified' => \App\Http\Middleware\UserVerified::class,
         'posToken' => \App\Http\Middleware\posToken::class,
+        'posUser' => \App\Http\Middleware\posUser::class,
     ];
 }

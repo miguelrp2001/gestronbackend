@@ -15,6 +15,7 @@ class gposcontroller extends Controller
     public function __construct()
     {
         $this->middleware('posToken');
+        $this->middleware('posUser')->only('addTicket');
     }
 
     public function index()
@@ -38,8 +39,6 @@ class gposcontroller extends Controller
     {
         $pos = Centro::find(Session::get('pos')->centro_id);
 
-        // dd($pos);
-
         $tarifaSeleccionada = Tarifa::find($pos->tarifaSeleccionada);
 
         $precios = $tarifaSeleccionada->precios;
@@ -48,12 +47,14 @@ class gposcontroller extends Controller
         $preciosFinales = [];
 
         foreach ($precios as $precio) {
-            $preciosFinales[] = [
-                'id' => $precio->id,
-                'precio' => $precio->precio,
-                'impuesto' => $precio->impuesto,
-                'articulo' => $precio->articulo,
-            ];
+            if ($precio->articulo->estado == 'a') {
+                $preciosFinales[] = [
+                    'id' => $precio->id,
+                    'precio' => $precio->precio,
+                    'impuesto' => $precio->impuesto,
+                    'articulo' => $precio->articulo,
+                ];
+            }
         }
 
 
@@ -65,8 +66,15 @@ class gposcontroller extends Controller
         $pos = Centro::find(Session::get('pos')->centro_id);
 
         $familias = $pos->familias;
+        $familiasFinal = [];
 
-        return response()->json(['status' => 'ok', 'data' => ['familias' => $familias]], 200);
+        foreach ($familias as $familia) {
+            if (count($familia->articulos) > 0) {
+                $familiasFinal[] = $familia;
+            }
+        }
+
+        return response()->json(['status' => 'ok', 'data' => ['familias' => $familiasFinal]], 200);
     }
 
 
@@ -102,5 +110,33 @@ class gposcontroller extends Controller
         } else {
             return response()->json(['status' => 'error', 'message' => 'Contraseña incorrecta'], 403);
         }
+    }
+
+    public function tickets()
+    {
+        $pos = Centro::find(Session::get('pos')->centro_id);
+
+        $tickets = $pos->tickets;
+
+        return response()->json(['status' => 'ok', 'data' => ['tickets' => $tickets]], 200);
+    }
+
+    public function addTicket(Request $request)
+    {
+        $pos = Centro::find(Session::get('pos')->centro_id);
+        $trabajador = Trabajador::find(Session::get('trabajador')->id);
+
+        $validatedRequest = $request->validate([
+            'cliente_id' => 'nullable|exists:clientes,id',
+            'items' => 'required|array',
+        ]);
+
+
+        $ticket = $pos->tickets()->create([
+            'centro_id' => $pos->id,
+            'trabajador_id' => $trabajador->id,
+        ]);
+
+        return response()->json(['status' => 'ok', 'data' => ['ticket' => $ticket]], 200);
     }
 }
