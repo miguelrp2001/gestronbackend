@@ -18,7 +18,7 @@ return new class extends Migration
             $table->id();
             $table->boolean('activo')->default(true);
             $table->string('nombre', 15);
-            $table->string('clave', 500)->nullable();
+            $table->string('clave', 500);
             $table->foreignIdFor(Centro::class)->references('id')->on('centros')->restrictOnDelete();
             $table->timestamps();
         });

@@ -237,7 +237,6 @@ class CentroController extends Controller
             return false;
         }
 
-
         foreach (Auth::user()->centros as $centro) {
             if ($centroBd->id == $centro->id) {
                 return true;

@@ -8,6 +8,7 @@ use App\Http\Controllers\TarifaController;
 use App\Http\Controllers\TrabajadorController;
 use App\Http\Controllers\POSController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\gposcontroller;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ImpuestoController;
 use App\Http\Controllers\PrecioController;
@@ -101,6 +102,7 @@ Route::group([
     Route::post('/create', [TarifaController::class, 'store']);
     Route::post('/{tarifa}/articulos', [TarifaController::class, 'addArticulo']);
     Route::delete('/{tarifa}', [TarifaController::class, 'destroy']);
+    Route::put('/{tarifa}/default', [TarifaController::class, 'tarifaPorDefecto']);
 });
 
 Route::group([
@@ -150,4 +152,16 @@ Route::group([
     Route::post('/create', [PosController::class, 'store']);
     Route::put('/{pos}/status', [PosController::class, 'chgStatus']);
     Route::put('/{pos}/regenerarToken', [PosController::class, 'regenerarToken']);
+});
+
+Route::group([
+    'middleware' => ['posToken'],
+    'prefix' => 'pos'
+], function ($router) {
+    Route::get('/centro', [gposcontroller::class, 'index']);
+    Route::get('/familias', [gposcontroller::class, 'familias']);
+    Route::get('/articulos', [gposcontroller::class, 'articulos']);
+    Route::get('/clientes', [gposcontroller::class, 'clientes']);
+    Route::get('/perfiles', [gposcontroller::class, 'perfiles']);
+    Route::post('/perfil/auth', [gposcontroller::class, 'authTrabajador']);
 });

@@ -31,7 +31,7 @@ class TarifaController extends Controller
 
         $tarifas = $centroBuscado->tarifas;
 
-        return response()->json(['status' => 'ok', 'data' => ['tarifas' => $tarifas]], 200);
+        return response()->json(['status' => 'ok', 'data' => ['tarifas' => $tarifas, 'centro' => $centroBuscado]], 200);
     }
 
     /**
@@ -169,6 +169,23 @@ class TarifaController extends Controller
         }
 
         return response()->json(['status' => "ok", "data" => ['mensaje' => "Añadidos satisfactoriamente"]], 200);
+    }
+
+    public function tarifaPorDefecto($tarifa)
+    {
+
+        $tarifaBD = Tarifa::find($tarifa);
+        $centroBD = Centro::find($tarifaBD->centro_id);
+
+
+        if (!$tarifaBD || !$centroBD || !(new CentroController)->deTusCentros($centroBD->id)) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
+
+        $centroBD->tarifaSeleccionada = $tarifaBD->id;
+        $centroBD->save();
+
+        return response()->json(['status' => "ok", "data" => ['mensaje' => "Tarifa por defecto cambiada"]], 200);
     }
 
     private function inTarifa(Tarifa $tarifa, Articulo $articulo,)

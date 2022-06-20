@@ -60,6 +60,7 @@ class ArticuloController extends Controller
         $articuloBD->color = $validated['color'];
         $articuloBD->familia_id = $validated['familia'];
         $articuloBD->codbarras = $validated['codbarras'];
+
         $articuloBD->save();
         return response()->json(['status' => "ok", "data" => ['articulo' => $articuloBD]], 200);
     }

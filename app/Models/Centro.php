@@ -63,4 +63,9 @@ class Centro extends Model
     {
         return $this->hasMany(POS::class);
     }
+
+    public function precios()
+    {
+        return $this->hasManyThrough(Precio::class, Tarifa::class);
+    }
 }

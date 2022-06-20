@@ -41,7 +41,7 @@ class TrabajadorController extends Controller
     {
         $requValidated = $request->validate([
             'nombre' => 'required|string|max:15',
-            'clave' => ['nullable', 'integer', 'min:0', 'max:9999999999999999'],
+            'clave' => ['required', 'integer', 'min:0', 'max:9999999999999999'],
             'centro_id' => ['required', 'integer', 'exists:centros,id', new tuCentro],
         ]);
 
@@ -51,7 +51,7 @@ class TrabajadorController extends Controller
         ]);
 
         if ($requValidated['clave']) {
-            $nuevoPerfil->clave = bcrypt($requValidated['clave']);
+            $nuevoPerfil->clave = password_hash($requValidated['clave'], PASSWORD_DEFAULT);
         }
 
         $nuevoPerfil->save();
@@ -91,13 +91,13 @@ class TrabajadorController extends Controller
 
         $validatedReq = $request->validate([
             'nombre' => 'required|string|max:15',
-            'clave' => ['nullable', 'integer', 'min:0', 'max:9999999999999999'],
+            'clave' => ['required', 'integer', 'min:0', 'max:9999999999999999'],
         ]);
 
         $perfilBD->nombre = $validatedReq['nombre'];
 
         if ($validatedReq['clave']) {
-            $perfilBD->clave = bcrypt($validatedReq['clave']);
+            $perfilBD->clave = password_hash($validatedReq['clave'], PASSWORD_DEFAULT);
         }
 
         $perfilBD->save();
