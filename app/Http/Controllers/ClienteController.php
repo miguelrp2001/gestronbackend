@@ -80,6 +80,25 @@ class ClienteController extends Controller
         if (!$clienteBD || !(new CentroController)->deTusCentros($clienteBD->centro_id)) {
             return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
         }
+
+        $tickets = [];
+
+        foreach ($clienteBD->tickets as $ticket) {
+            $total = 0;
+            foreach ($ticket->lineas as $linea) {
+                if ($linea->estado == 'a') {
+                    $total += $linea->precio;
+                }
+                $tickets[] = [
+                    'id' => $ticket->id,
+                    'fecha' => $ticket->updated_at->format('d/m/Y - H:i:s'),
+                    'total' => $total,
+                    'estado' => $ticket->estado,
+                ];
+            }
+        }
+
+        return response()->json(['status' => 'ok', 'data' => ['cliente' => $clienteBD, 'tickets' => $tickets]], 200);
     }
 
     /**

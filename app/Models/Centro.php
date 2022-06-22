@@ -44,6 +44,11 @@ class Centro extends Model
         return $this->hasMany(Ticket::class);
     }
 
+    public function lineas()
+    {
+        return $this->hasManyThrough(Linea::class, Ticket::class);
+    }
+
     public function administradors()
     {
         return $this->belongsToMany(User::class);

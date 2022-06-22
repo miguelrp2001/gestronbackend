@@ -8,6 +8,7 @@ use App\Http\Controllers\TarifaController;
 use App\Http\Controllers\TrabajadorController;
 use App\Http\Controllers\POSController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\gposcontroller;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ImpuestoController;
@@ -171,4 +172,11 @@ Route::group([
     Route::delete('/ticket/{ticket}', [gposcontroller::class, 'anularTicket']);
     Route::post('/cliente', [gposcontroller::class, 'addCliente']);
     Route::post('/ticket/{ticket}/cobrar', [gposcontroller::class, 'anndirCobro']);
+});
+
+Route::group([
+    'middleware' => ['api', 'auth:sanctum'],
+    'prefix' => 'dashboard'
+], function ($router) {
+    Route::get('/{centro}/stats', [Dashboard::class, 'dashboard']);
 });
