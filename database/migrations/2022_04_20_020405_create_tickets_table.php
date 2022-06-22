@@ -20,7 +20,6 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Centro::class)->references('id')->on('centros')->restrictOnDelete();
             $table->foreignIdFor(Trabajador::class)->references('id')->on('trabajadors')->restrictOnDelete();
-            $table->foreignIdFor(Cliente::class)->nullable()->references('id')->on('clientes')->restrictOnDelete();
             $table->enum('estado', ['n', 'a', 'c'])->default('n');
             $table->enum('tipo', ['p', 't', 'f'])->default('p');
             $table->timestamps();

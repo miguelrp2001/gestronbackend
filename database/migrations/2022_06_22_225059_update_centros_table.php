@@ -16,6 +16,9 @@ return new class extends Migration
         Schema::table('centros', function (Blueprint $table) {
             $table->foreignId("tarifaSeleccionada")->nullable()->constrained()->references("id")->on("tarifas");
         });
+        Schema::table('tickets', function (Blueprint $table) {
+            $table->foreignIdFor(Cliente::class)->nullable()->references('id')->on('clientes')->restrictOnDelete();
+        });
     }
 
     /**
