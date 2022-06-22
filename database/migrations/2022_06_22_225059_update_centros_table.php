@@ -13,14 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('centros', function (Blueprint $table) {
-            $table->id();
-            $table->string("nombre", 60);
-            $table->string("nombre_legal", 60);
-            $table->string("nif", 9);
-            $table->string("telefono", 9);
-            $table->string("direccion", 160);
-            $table->timestamps();
+        Schema::table('centros', function (Blueprint $table) {
+            $table->foreignId("tarifaSeleccionada")->nullable()->constrained()->references("id")->on("tarifas");
         });
     }
 
@@ -31,6 +25,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('centros');
+        //
     }
 };
