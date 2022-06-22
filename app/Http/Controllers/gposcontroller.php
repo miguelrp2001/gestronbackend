@@ -290,7 +290,7 @@ class gposcontroller extends Controller
             $ticket->save();
         }
 
-        if ($ticket->cliente_id) {
+        if ($ticket->cliente_id && $ticket->cliente->ticketCorreo) {
             Mail::to($ticket->cliente->correo)->send(new TicketCobrado($ticket->cliente, $ticket));
         }
         return response()->json(['status' => 'ok', 'data' => ['ticket' => $ticket]], 200);
