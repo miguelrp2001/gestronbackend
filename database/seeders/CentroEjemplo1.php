@@ -87,6 +87,7 @@ class CentroEjemplo1 extends Seeder
         DB::table('clientes')->insert([
             'id' => 1,
             'nombre' => "Cliente 1",
+            'nombre_fiscal' => "Empresa Cli1 SL",
             'nif' => "B12345678",
             'telefono' => "666555444",
             'direccion' => "Calle de Ejemplo, 1",
@@ -99,6 +100,7 @@ class CentroEjemplo1 extends Seeder
         DB::table('clientes')->insert([
             'id' => 2,
             'nombre' => "Cliente 2",
+            'nombre_fiscal' => "Empresa Cli2 SL",
             'nif' => "B12345678",
             'telefono' => "666222111",
             'direccion' => "Calle de Ejemplo, 2",
@@ -111,6 +113,7 @@ class CentroEjemplo1 extends Seeder
         DB::table('clientes')->insert([
             'id' => 3,
             'nombre' => "Cliente 3",
+            'nombre_fiscal' => "Nombre Cliente 3",
             'nif' => "12345678Z",
             'telefono' => "666333444",
             'direccion' => "Calle de Ejemplo, 3",
@@ -123,6 +126,7 @@ class CentroEjemplo1 extends Seeder
         DB::table('clientes')->insert([
             'id' => 4,
             'nombre' => "Cliente 4",
+            'nombre_fiscal' => "Empresa Cli4 SA",
             'nif' => "B12345678",
             'telefono' => "666555444",
             'direccion' => "Calle de Ejemplo, 1",
@@ -228,23 +232,6 @@ class CentroEjemplo1 extends Seeder
             'updated_at' => now()
         ]);
 
-        DB::table('precios')->insert([
-            'articulo_id' => 2,
-            'tarifa_id' => 1,
-            'impuesto_id' => 2,
-            'precio' => 18,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-
-        DB::table('precios')->insert([
-            'articulo_id' => 2,
-            'tarifa_id' => 2,
-            'impuesto_id' => 2,
-            'precio' => 18,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
         DB::table('articulos')->insert([
             'id' => 3,
             'nombre' => 'AGUA GAS',
@@ -252,7 +239,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#40d6e7',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -281,7 +267,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#34b239',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -310,7 +295,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#070fa9',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -339,7 +323,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#a82812',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -368,7 +351,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#0cabbb',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -397,7 +379,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#94a897',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -426,7 +407,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#5e7f28',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -455,7 +435,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#e3b956',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -484,7 +463,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#76c5c3',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -513,7 +491,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#2c512f',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -542,7 +519,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#62c76d',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -571,7 +547,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#9bff88',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -600,7 +575,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#901bf2',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -629,7 +603,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#dc28ce',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -658,7 +631,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#7890ce',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -687,7 +659,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#5bae94',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -716,7 +687,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#36c237',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -745,7 +715,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#2e0ff2',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -774,7 +743,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#e598e6',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -803,7 +771,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#c5daf3',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -832,7 +799,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#ceb1c8',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -861,7 +827,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#4da31b',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -890,7 +855,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#6a56d5',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -919,7 +883,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#f87780',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -948,7 +911,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#1503f3',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -977,7 +939,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#8f19c7',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1006,7 +967,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#ab6e3b',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1035,7 +995,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#a9df5c',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1064,7 +1023,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#d5d14c',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1093,7 +1051,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#6831c2',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1122,7 +1079,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#162b9f',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1151,7 +1107,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#fb82b6',
             'familia_id' => 1,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1180,7 +1135,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#70e071',
             'familia_id' => 3,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1209,7 +1163,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#7ad610',
             'familia_id' => 3,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1238,7 +1191,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#c3b0db',
             'familia_id' => 3,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1267,7 +1219,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#10f089',
             'familia_id' => 3,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1296,7 +1247,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#246cb0',
             'familia_id' => 3,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1325,7 +1275,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#ff64ba',
             'familia_id' => 3,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1354,7 +1303,6 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#3456b4',
             'familia_id' => 3,
-            'centro_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1383,7 +1331,7 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#c8325c',
             'familia_id' => 3,
-            'centro_id' => 1,
+
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1412,7 +1360,7 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#2015fd',
             'familia_id' => 3,
-            'centro_id' => 1,
+
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1441,7 +1389,7 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#01bc4e',
             'familia_id' => 3,
-            'centro_id' => 1,
+
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1470,7 +1418,7 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#3dbe68',
             'familia_id' => 8,
-            'centro_id' => 1,
+
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1499,7 +1447,7 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#c2f1a0',
             'familia_id' => 8,
-            'centro_id' => 1,
+
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1528,7 +1476,7 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#4b9b2e',
             'familia_id' => 8,
-            'centro_id' => 1,
+
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1557,7 +1505,7 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#0f1364',
             'familia_id' => 8,
-            'centro_id' => 1,
+
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1586,7 +1534,7 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#192c05',
             'familia_id' => 8,
-            'centro_id' => 1,
+
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1615,7 +1563,7 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#dc7f15',
             'familia_id' => 8,
-            'centro_id' => 1,
+
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1644,7 +1592,7 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#ab51fb',
             'familia_id' => 9,
-            'centro_id' => 1,
+
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1673,7 +1621,7 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#3d34a5',
             'familia_id' => 9,
-            'centro_id' => 1,
+
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1702,7 +1650,7 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#0ac912',
             'familia_id' => 9,
-            'centro_id' => 1,
+
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1731,7 +1679,7 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#0dc775',
             'familia_id' => 9,
-            'centro_id' => 1,
+
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1760,7 +1708,7 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#3529a9',
             'familia_id' => 9,
-            'centro_id' => 1,
+
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1789,7 +1737,7 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#28c5ba',
             'familia_id' => 9,
-            'centro_id' => 1,
+
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1818,7 +1766,7 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#6725f5',
             'familia_id' => 10,
-            'centro_id' => 1,
+
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1847,7 +1795,7 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#a5a431',
             'familia_id' => 10,
-            'centro_id' => 1,
+
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -1876,7 +1824,7 @@ class CentroEjemplo1 extends Seeder
             'estado' => 'a',
             'color' => '#393434',
             'familia_id' => 10,
-            'centro_id' => 1,
+
             'created_at' => now(),
             'updated_at' => now()
         ]);

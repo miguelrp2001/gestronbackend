@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ImpuestoSeeder::class,
             UserSeeder::class,
+            FormasDePago::class,
+            CentroEjemplo1::class,
         ]);
     }
 }

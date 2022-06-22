@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('nombre', 30);
             $table->string('token', 300);
             $table->boolean('activo')->default(true);
-            $table->foreignId('creadoPor')->references('id')->on('users')->nullOnDelete()->nullable();
+            $table->foreignId('creadoPor')->nullable()->constrained()->references('id')->on('users')->nullOnDelete();
             $table->timestamps();
         });
     }

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string("nif", 9);
             $table->string("telefono", 9);
             $table->string("direccion", 160);
-            $table->foreignId("tarifaSeleccionada")->references("id")->on("tarifas")->nullable()->onDelete("cascade");
+            $table->foreignId("tarifaSeleccionada")->nullable()->constrained()->references("id")->on("tarifas");
             $table->timestamps();
         });
     }

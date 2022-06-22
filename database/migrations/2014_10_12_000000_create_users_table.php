@@ -19,6 +19,7 @@ return new class extends Migration
             $table->boolean('activo')->default(true);
             $table->boolean('admin')->default(false);
             $table->string('email')->unique();
+            $table->string('codigoConfirmacion', 6)->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->integer('telefono')->nullable();
