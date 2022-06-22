@@ -22,12 +22,10 @@ class posToken
 
         $pos = POS::where('token', $token)->first();
 
-        if (!$pos) {
+        if (!$pos || !$pos->activo) {
             return response()->json(['status' => "error", "data" => ['mensaje' =>  "No autorizado"]], 401);
         }
-
         Session::flash('pos', $pos);
-
         return $next($request);
     }
 }

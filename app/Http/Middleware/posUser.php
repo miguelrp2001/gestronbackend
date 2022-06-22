@@ -23,8 +23,8 @@ class posUser
 
         $trabajador = Trabajador::find($trabajadorID);
 
-        if (!$trabajador) {
-            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No autorizado"]], 401);
+        if (!$trabajador || !$trabajador->activo) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No tiene permiso"]], 403);
         }
 
         Session::flash('trabajador', $trabajador);

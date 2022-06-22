@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class FormaPago extends Model
 {
     use HasFactory;
+
+    public function cobros()
+    {
+        return $this->hasMany(Cobro::class);
+    }
 }

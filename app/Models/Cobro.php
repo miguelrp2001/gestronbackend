@@ -5,15 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Linea extends Model
+class Cobro extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'ticket_id',
-        'trabajador_id',
-        'precio_id',
-        'precio',
+        'forma_pago_id',
+        'cantidad',
+        'estado',
+        'trabajador_id'
     ];
 
     public function ticket()
@@ -26,8 +27,8 @@ class Linea extends Model
         return $this->belongsTo(Trabajador::class);
     }
 
-    public function precioOrigen()
+    public function metodoPago()
     {
-        return $this->belongsTo(Precio::class);
+        return $this->belongsTo(FormaPago::class);
     }
 }

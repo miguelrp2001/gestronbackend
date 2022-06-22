@@ -163,9 +163,12 @@ Route::group([
     Route::get('/articulos', [gposcontroller::class, 'articulos']);
     Route::get('/clientes', [gposcontroller::class, 'clientes']);
     Route::get('/perfiles', [gposcontroller::class, 'perfiles']);
+    Route::get('/formaspago', [gposcontroller::class, 'formaspago']);
     Route::post('/perfil/auth', [gposcontroller::class, 'authTrabajador']);
     Route::get('/tickets', [gposcontroller::class, 'tickets']);
     Route::post('/ticket', [gposcontroller::class, 'addTicket']);
     Route::put('/ticket/{ticket}', [gposcontroller::class, 'modifyTicket']);
     Route::delete('/ticket/{ticket}', [gposcontroller::class, 'anularTicket']);
+    Route::post('/cliente', [gposcontroller::class, 'addCliente']);
+    Route::post('/ticket/{ticket}/cobrar', [gposcontroller::class, 'anndirCobro']);
 });

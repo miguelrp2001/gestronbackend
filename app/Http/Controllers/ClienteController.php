@@ -74,9 +74,12 @@ class ClienteController extends Controller
      * @param  \App\Models\Cliente  $cliente
      * @return \Illuminate\Http\Response
      */
-    public function show(Cliente $cliente)
+    public function show($cliente)
     {
-        //
+        $clienteBD = Cliente::find($cliente);
+        if (!$clienteBD || !(new CentroController)->deTusCentros($clienteBD->centro_id)) {
+            return response()->json(['status' => "error", "data" => ['mensaje' =>  "No encontrado"]], 404);
+        }
     }
 
     /**

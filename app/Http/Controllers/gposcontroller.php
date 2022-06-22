@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\TicketCobrado;
 use App\Models\Centro;
+use App\Models\Cobro;
 use App\Models\Familia;
 use App\Models\Linea;
 use App\Models\Tarifa;
 use App\Models\Ticket;
 use App\Models\Trabajador;
+use App\Models\FormaPago;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 
 class gposcontroller extends Controller
@@ -17,7 +21,7 @@ class gposcontroller extends Controller
     public function __construct()
     {
         $this->middleware('posToken');
-        $this->middleware('posUser')->only('addTicket', 'modifyTicket', 'anularTicket');
+        $this->middleware('posUser')->only('addTicket', 'modifyTicket', 'anularTicket', 'anndirCobro', 'addCliente');
     }
 
     public function index()
@@ -98,6 +102,13 @@ class gposcontroller extends Controller
         return response()->json(['status' => 'ok', 'data' => ['perfiles' => $perfiles]], 200);
     }
 
+    public function formaspago()
+    {
+        $formaspago = FormaPago::all();
+
+        return response()->json(['status' => 'ok', 'data' => ['formaspago' => $formaspago]], 200);
+    }
+
     public function authTrabajador(Request $request)
     {
 
@@ -118,7 +129,7 @@ class gposcontroller extends Controller
     {
         $pos = Centro::find(Session::get('pos')->centro_id);
 
-        $tickets = Ticket::where('centro_id', $pos->id)->where('estado', 'like', 'n')->get();
+        $tickets = Ticket::where('centro_id', $pos->id)->where('estado', 'like', 'n')->orWhere('estado', 'like', 'c')->get();
 
         $ticketsFinal = [];
 
@@ -131,6 +142,7 @@ class gposcontroller extends Controller
                 'cliente_id' => $ticket->cliente_id,
                 'estado' => $ticket->estado,
                 'items' => Linea::where('ticket_id', $ticket->id)->get(),
+                'cobros' => Cobro::where('ticket_id', $ticket->id)->get(),
             ];
         };
 
@@ -181,12 +193,15 @@ class gposcontroller extends Controller
 
         $ticket = Ticket::find($ticket);
 
-        if (!$ticket || $ticket->centro_id != $pos->id) {
+        if (!$ticket || $ticket->centro_id != $pos->id || $ticket->estado != 'n') {
             return response()->json(['status' => 'error', 'message' => 'Ticket no encontrado'], 404);
         }
 
         if ($request['cliente_id']) {
             $ticket->cliente_id = $request['cliente_id'];
+            $ticket->save();
+        } else {
+            $ticket->cliente_id = null;
             $ticket->save();
         }
 
@@ -230,5 +245,80 @@ class gposcontroller extends Controller
         $ticket->save();
 
         return response()->json(['status' => 'ok', 'data' => ['ticket' => $ticket]], 200);
+    }
+
+    public function anndirCobro($ticket, Request $request)
+    {
+        $pos = Centro::find(Session::get('pos')->centro_id);
+        $trabajador = Trabajador::find(Session::get('trabajador')->id);
+
+        $ticket = Ticket::find($ticket);
+
+        if (!$ticket || $ticket->centro_id != $pos->id || $ticket->estado != 'n') {
+            return response()->json(['status' => 'error', 'message' => 'Ticket no encontrado'], 404);
+        }
+
+        $validatedRequest = $request->validate([
+            'cobros' => 'nullable|array',
+        ]);
+        $cantidad = 0;
+        $cobrosCreados = [];
+        foreach ($validatedRequest['cobros'] as $cobro) {
+            $cobrosCreados[] = $ticket->cobros()->create([
+                'trabajador_id' => $trabajador->id,
+                'centro_id' => $pos->id,
+                'forma_pago_id' => $cobro['forma_pago_id'],
+                'cantidad' => $cobro['cantidad'],
+            ]);
+            $cantidad += $cobro['cantidad'];
+        }
+
+        foreach ($ticket->lineas as $linea) {
+            if ($linea->estado == 'a') {
+                $cantidad -= $linea->precio;
+            }
+        }
+
+        if ($cantidad != 0) {
+            foreach ($cobrosCreados as $cobro) {
+                $cobro->delete();
+            }
+            return response()->json(['status' => 'error', 'message' => 'Cantidad de cobro no coincide' . $cantidad], 400);
+        } else {
+            $ticket->estado = 'c';
+            $ticket->tipo = ($ticket->cliente_id) ? 'f' : 't';
+            $ticket->save();
+        }
+
+        if ($ticket->cliente_id) {
+            Mail::to($ticket->cliente->correo)->send(new TicketCobrado($ticket->cliente, $ticket));
+        }
+        return response()->json(['status' => 'ok', 'data' => ['ticket' => $ticket]], 200);
+    }
+
+    public function addCliente(Request $request)
+    {
+
+        $Centro = Centro::find(Session::get('pos')->centro_id);
+
+        $requValidated = $request->validate([
+            'nombre' => 'required|string|max:25',
+            'direccion' => 'required|string|max:150',
+            'nif' => 'required|string|max:9|unique:clientes,nif',
+            'nombre_fiscal' => 'required|string|max:25',
+            'telefono' => 'required|string|max:15',
+            'correo' => 'required|string|max:120',
+        ]);
+
+        $cliente = $Centro->clientes()->create([
+            'nombre' => $requValidated['nombre'],
+            'direccion' => $requValidated['direccion'],
+            'nif' => $requValidated['nif'],
+            'nombre_fiscal' => $requValidated['nombre_fiscal'],
+            'telefono' => $requValidated['telefono'],
+            'correo' => $requValidated['correo'],
+        ]);
+
+        return response()->json(['status' => 'ok', 'data' => ['cliente' => $cliente]], 200);
     }
 }

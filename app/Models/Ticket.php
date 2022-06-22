@@ -33,4 +33,9 @@ class Ticket extends Model
     {
         return $this->belongsTo(Centro::class);
     }
+
+    public function cobros()
+    {
+        return $this->hasMany(Cobro::class);
+    }
 }
