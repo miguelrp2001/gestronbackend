@@ -9,6 +9,14 @@ class Linea extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'ticket_id',
+        'trabajador_id',
+        'precio_id',
+        'precio',
+    ];
+
+
     public function articulo()
     {
         return $this->belongsTo(Articulo::class);

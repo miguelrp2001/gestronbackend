@@ -165,4 +165,7 @@ Route::group([
     Route::get('/perfiles', [gposcontroller::class, 'perfiles']);
     Route::post('/perfil/auth', [gposcontroller::class, 'authTrabajador']);
     Route::get('/tickets', [gposcontroller::class, 'tickets']);
+    Route::post('/ticket', [gposcontroller::class, 'addTicket']);
+    Route::put('/ticket/{ticket}', [gposcontroller::class, 'modifyTicket']);
+    Route::delete('/ticket/{ticket}', [gposcontroller::class, 'anularTicket']);
 });

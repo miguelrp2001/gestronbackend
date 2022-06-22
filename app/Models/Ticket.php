@@ -9,6 +9,11 @@ class Ticket extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'centro_id',
+        'trabajador_id'
+    ];
+
     public function lineas()
     {
         return $this->hasMany(Linea::class);

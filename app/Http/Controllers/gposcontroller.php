@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Centro;
 use App\Models\Familia;
+use App\Models\Linea;
 use App\Models\Tarifa;
+use App\Models\Ticket;
 use App\Models\Trabajador;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -15,7 +17,7 @@ class gposcontroller extends Controller
     public function __construct()
     {
         $this->middleware('posToken');
-        $this->middleware('posUser')->only('addTicket');
+        $this->middleware('posUser')->only('addTicket', 'modifyTicket', 'anularTicket');
     }
 
     public function index()
@@ -116,9 +118,23 @@ class gposcontroller extends Controller
     {
         $pos = Centro::find(Session::get('pos')->centro_id);
 
-        $tickets = $pos->tickets;
+        $tickets = Ticket::where('centro_id', $pos->id)->where('estado', 'like', 'n')->get();
 
-        return response()->json(['status' => 'ok', 'data' => ['tickets' => $tickets]], 200);
+        $ticketsFinal = [];
+
+        foreach ($tickets as $ticket) {
+            $ticketsFinal[] = [
+                'id' => $ticket->id,
+                'numero' => $ticket->numero,
+                'fecha' => $ticket->fecha,
+                'total' => $ticket->total,
+                'cliente_id' => $ticket->cliente_id,
+                'estado' => $ticket->estado,
+                'items' => Linea::where('ticket_id', $ticket->id)->get(),
+            ];
+        };
+
+        return response()->json(['status' => 'ok', 'data' => ['tickets' => $ticketsFinal]], 200);
     }
 
     public function addTicket(Request $request)
@@ -136,6 +152,82 @@ class gposcontroller extends Controller
             'centro_id' => $pos->id,
             'trabajador_id' => $trabajador->id,
         ]);
+
+        if ($request['cliente_id']) {
+            $ticket->cliente_id = $validatedRequest['cliente_id'];
+            $ticket->save();
+        }
+
+        foreach ($validatedRequest['items'] as $item) {
+            $ticket->lineas()->create([
+                'precio_id' => $item['precio_id'],
+                'precio' => $item['precio'],
+                'trabajador_id' => $trabajador->id,
+            ]);
+        }
+
+        return response()->json(['status' => 'ok', 'data' => ['ticket' => $ticket]], 200);
+    }
+
+    public function modifyTicket($ticket, Request $request)
+    {
+        $pos = Centro::find(Session::get('pos')->centro_id);
+        $trabajador = Trabajador::find(Session::get('trabajador')->id);
+
+        $validatedRequest = $request->validate([
+            'cliente_id' => 'nullable|exists:clientes,id',
+            'items' => 'nullable|array',
+        ]);
+
+        $ticket = Ticket::find($ticket);
+
+        if (!$ticket || $ticket->centro_id != $pos->id) {
+            return response()->json(['status' => 'error', 'message' => 'Ticket no encontrado'], 404);
+        }
+
+        if ($request['cliente_id']) {
+            $ticket->cliente_id = $request['cliente_id'];
+            $ticket->save();
+        }
+
+        foreach ($validatedRequest['items'] as $item) {
+            if ($item['id'] == 0) {
+                $ticket->lineas()->create([
+                    'precio_id' => $item['precio_id'],
+                    'precio' => $item['precio'],
+                    'trabajador_id' => $trabajador->id,
+                ]);
+            } else {
+                $linea = Linea::find($item['id']);
+                $linea->precio = $item['precio'];
+                $linea->estado = $item['estado'];
+                $linea->trabajador_id = $trabajador->id;
+                $linea->save();
+            }
+        }
+
+        return response()->json(['status' => 'ok', 'data' => ['ticket' => $ticket]], 200);
+    }
+
+    public function anularTicket($ticket)
+    {
+        $pos = Centro::find(Session::get('pos')->centro_id);
+        $trabajador = Trabajador::find(Session::get('trabajador')->id);
+
+        $ticket = Ticket::find($ticket);
+
+        if (!$ticket || $ticket->centro_id != $pos->id) {
+            return response()->json(['status' => 'error', 'message' => 'Ticket no encontrado'], 404);
+        }
+
+        $ticket->estado = 'a';
+
+        foreach ($ticket->lineas as $linea) {
+            $linea->estado = 'c';
+            $linea->save();
+        }
+
+        $ticket->save();
 
         return response()->json(['status' => 'ok', 'data' => ['ticket' => $ticket]], 200);
     }

@@ -24,6 +24,8 @@ class UserSeeder extends Seeder
             'telefono' => 666555444,
             'ipRegistro' => "0.0.0.0",
             'ipUltLogin' => "0.0.0.0",
+            'created_at' => now(),
+            'updated_at' => now()
         ]);
 
         DB::table('users')->insert([
@@ -35,6 +37,8 @@ class UserSeeder extends Seeder
             'telefono' => 666555333,
             'ipRegistro' => "0.0.0.0",
             'ipUltLogin' => "0.0.0.0",
+            'created_at' => now(),
+            'updated_at' => now()
         ]);
     }
 }

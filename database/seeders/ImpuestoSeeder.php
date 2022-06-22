@@ -19,19 +19,25 @@ class ImpuestoSeeder extends Seeder
             'id' => 1,
             'nombre' => "IVA General",
             'nombre_corto' => "IVA21",
-            'porcentaje' => 21
+            'porcentaje' => 21,
+            'updated_at' => now(),
+            'created_at' => now()
         ]);
         DB::table('impuestos')->insert([
             'id' => 2,
             'nombre' => "IVA Reducido",
             'nombre_corto' => "IVA10",
-            'porcentaje' => 10
+            'porcentaje' => 10,
+            'updated_at' => now(),
+            'created_at' => now()
         ]);
         DB::table('impuestos')->insert([
             'id' => 3,
             'nombre' => "IVA Super reducido",
             'nombre_corto' => "IVA04",
-            'porcentaje' => 4
+            'porcentaje' => 4,
+            'updated_at' => now(),
+            'created_at' => now()
         ]);
     }
 }

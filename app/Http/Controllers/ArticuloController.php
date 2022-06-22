@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\CentroController;
 use App\Rules\inCentro;
 use App\Rules\inCentroNuevo;
+use Illuminate\Validation\Rule;
 
 class ArticuloController extends Controller
 {
@@ -52,7 +53,7 @@ class ArticuloController extends Controller
             'nombre_corto' => ['required', 'string', 'max:15', 'min:1'],
             'color' => ['required', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
             'familia' => ['required', 'integer', new inCentroNuevo],
-            'codbarras' => ['nullable', 'string', 'max:50', 'min:1'],
+            'codbarras' => ['nullable', 'string', 'max:50', 'min:1', 'unique:articulos,codbarras'],
         ]);
 
         $articuloBD->nombre = $validated['nombre'];
@@ -130,7 +131,7 @@ class ArticuloController extends Controller
             'nombre_corto' => ['required', 'string', 'max:15', 'min:1'],
             'color' => ['required', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
             'familia' => ['required', 'integer', new inCentro],
-            'codBarras' => ['nullable', 'string', 'max:50', 'min:1'],
+            'codbarras' => ['nullable', 'string', 'max:50', 'min:1', Rule::unique('articulos', 'codbarras')->ignore($articuloBD->id)],
         ]);
 
 
@@ -138,7 +139,7 @@ class ArticuloController extends Controller
         $articuloBD->nombre_corto = $validated['nombre_corto'];
         $articuloBD->color = $validated['color'];
         $articuloBD->familia_id = $validated['familia'];
-        $articuloBD->codbarras = $validated['codBarras'];
+        $articuloBD->codbarras = $validated['codbarras'];
 
         $articuloBD->save();
         return response()->json(['status' => "ok", "data" => ['articulo' => $articuloBD]], 200);
