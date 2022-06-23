@@ -89,13 +89,13 @@ class ClienteController extends Controller
                 if ($linea->estado == 'a') {
                     $total += $linea->precio;
                 }
+		}
                 $tickets[] = [
                     'id' => $ticket->id,
                     'fecha' => $ticket->updated_at->format('d/m/Y - H:i:s'),
                     'total' => $total,
                     'estado' => $ticket->estado,
                 ];
-            }
         }
 
         return response()->json(['status' => 'ok', 'data' => ['cliente' => $clienteBD, 'tickets' => $tickets]], 200);

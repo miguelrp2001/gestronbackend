@@ -31,7 +31,7 @@ class Dashboard extends Controller
         $lineasPorTrabajador = [];
 
         foreach ($trabajadores as $trabajador) {
-            $lineasPorTrabajador[] = ["nombre" => $trabajador->nombre, "anulaciones" => $trabajador->lineas()->where('estado', 'a')->whereDate('created_at', Carbon::today())->get()->count(), "marcadas" => $trabajador->lineas()->where('estado', 'c')->whereDate('created_at', Carbon::today())->get()->count()];
+            $lineasPorTrabajador[] = ["nombre" => $trabajador->nombre, "anulaciones" => $trabajador->lineas()->where('estado', 'c')->whereDate('created_at', Carbon::today())->get()->count(), "marcadas" => $trabajador->lineas()->where('estado', 'a')->whereDate('created_at', Carbon::today())->get()->count()];
         }
 
         return response()->json(['status' => "ok", "data" => ["stats" => ['ticketsCobrados' => $ticketsCobrados, 'ticketsPendientes' => $ticketsPendientes, 'ticketsAnulados' => $ticketsAnulados, 'lineasPorTrabajador' => $lineasPorTrabajador]]], 200);

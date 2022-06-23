@@ -162,7 +162,7 @@ class CentroEjemplo1 extends Seeder
 
         DB::table('familias')->insert([
             'id' => 4,
-            'nombre' => "Comida precocinada",
+            'nombre' => "Precocinada",
             'centro_id' => 2,
             'created_at' => now(),
             'updated_at' => now()
@@ -963,7 +963,7 @@ class CentroEjemplo1 extends Seeder
         DB::table('articulos')->insert([
             'id' => 29,
             'nombre' => 'COPA VINO BLANCO',
-            'nombre_corto' => 'COPA VINO BLANCO',
+            'nombre_corto' => 'COPA V BLANCO',
             'estado' => 'a',
             'color' => '#ab6e3b',
             'familia_id' => 1,
@@ -991,7 +991,7 @@ class CentroEjemplo1 extends Seeder
         DB::table('articulos')->insert([
             'id' => 30,
             'nombre' => 'COPA VINO ROSADO',
-            'nombre_corto' => 'COPA VINO ROSADO',
+            'nombre_corto' => 'COPA V ROSADO',
             'estado' => 'a',
             'color' => '#a9df5c',
             'familia_id' => 1,
@@ -1019,7 +1019,7 @@ class CentroEjemplo1 extends Seeder
         DB::table('articulos')->insert([
             'id' => 31,
             'nombre' => 'COPA VINO TINTO',
-            'nombre_corto' => 'COPA VINO TINTO',
+            'nombre_corto' => 'COPA V TINTO',
             'estado' => 'a',
             'color' => '#d5d14c',
             'familia_id' => 1,
@@ -1385,7 +1385,7 @@ class CentroEjemplo1 extends Seeder
         DB::table('articulos')->insert([
             'id' => 44,
             'nombre' => 'LAGRIMITAS POLLO',
-            'nombre_corto' => 'LAGRIMITAS POLLO',
+            'nombre_corto' => 'LAGR POLLO',
             'estado' => 'a',
             'color' => '#01bc4e',
             'familia_id' => 3,
@@ -1704,7 +1704,7 @@ class CentroEjemplo1 extends Seeder
         DB::table('articulos')->insert([
             'id' => 55,
             'nombre' => 'HELADO VAINILLA',
-            'nombre_corto' => 'HELADO VAINILLA',
+            'nombre_corto' => 'HEL VAINILLA',
             'estado' => 'a',
             'color' => '#3529a9',
             'familia_id' => 9,

@@ -71,7 +71,7 @@ class Kernel extends HttpKernel
         'admin' => Admin::class,
         'userActive' => userActive::class,
         'userAdminCenter' => userAdminCenter::class,
-        'userVerified' => \App\Http\Middleware\UserVerified::class,
+        'userVerified' => \App\Http\Middleware\userVerified::class,
         'posToken' => \App\Http\Middleware\posToken::class,
         'posUser' => \App\Http\Middleware\posUser::class,
     ];
